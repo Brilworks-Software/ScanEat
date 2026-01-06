@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "374727111450",
+    "project_id": "todo-lists-1167a",
+    "storage_bucket": "todo-lists-1167a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374727111450:android:8200c6e8db9e46c06df2a3",
+        "android_client_info": {
+          "package_name": "com.brilworks.scaneat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdOBN1NIfSwB-ei-JLEskqbHvndbnIEWs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
