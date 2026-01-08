@@ -152,16 +152,55 @@ export interface Product {
     | 'low_sugar';
   
   export interface ProductHistory {
+    id?: string;
     userId: string;
     barcode: string;
     scannedAt: Date;
-    product: Product;
+    name: string;
+    imageUrl: string;
+    score: number;
   }
   
   export interface FavoriteProduct {
     userId: string;
     barcode: string;
     addedAt: Date;
+  }
+  
+  
+  // Nutrition Analysis Types
+  export interface FoodItem {
+    id: string;
+    date: string;
+    food: string;
+    quantity_grams: number;
+    calories: number;
+    fat_grams: number;
+    carbs_grams: number;
+    protein_grams: number;
+    fiber_grams: number;
+    sugar_grams: number;
+    sodium_mg: number;
+    vitamin_a: string;
+    vitamin_c: string;
+    calcium_mg: number;
+    iron_mg: number;
+  }
+
+  export interface DetectedFood {
+    items: FoodItem[];
+    totalCalories: number;
+    totalProtein: number;
+    totalFat: number;
+    totalCarbs: number;
+    totalFiber: number;
+    totalCalcium: number;
+    totalIron: number;
+    totalSodium: number;
+    totalSugar: number;
+    totalQuantityGrams: number;
+    totalVitaminA: string;
+    totalVitaminC: string;
   }
   
   

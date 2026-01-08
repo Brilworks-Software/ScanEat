@@ -9,8 +9,7 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { TriangleAlert } from "lucide-react-native";
-import { fetchProductFromOpenFoodFacts } from '../lib/openFoodFacts';
-import { analyzeProductHealth } from '../lib/healthAnalysis';
+import { ProductService } from '../lib/services/ProductService';
 import { Product } from '../../shared/types/product';
 import ProductHeader from '../components/ProductHeader';
 import HealthScoreCard from '../components/HealthScoreCard';
@@ -19,6 +18,7 @@ import NutritionCard from '../components/NutritionCard';
 import IngredientCard from '../components/IngredientCard';
 import AdditiveCard from '../components/AdditiveCard';
 import AllergenCard from '../components/AllergenCard';
+import { analyzeProductHealth } from '../lib/healthAnalysis';
 
 
 export default function ProductDetailScreen() {
@@ -39,21 +39,26 @@ export default function ProductDetailScreen() {
         setError(null);
 
         // Fetch product directly from OpenFoodFacts API
-        const productData = await fetchProductFromOpenFoodFacts(barcode);
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Request timed out')), 30000)
+        );
+        
+        const productData = await Promise.race([
+          ProductService.getProduct(barcode),
+          timeoutPromise
+        ]) as any;
         
         if (!productData) {
           throw new Error('Product not found in OpenFoodFacts database.');
         }
 
-        // Analyze health directly in the app
+        // Analyze health directly in the browser
         const healthScore = analyzeProductHealth(productData);
 
         // Combine data
         const fullProduct: Product = {
           ...productData,
-          healthScore,
-          createdAt: productData.createdAt || new Date(),
-          updatedAt: productData.updatedAt || new Date(),
+          healthScore
         };
 
         setProduct(fullProduct);
@@ -198,6 +203,7 @@ export default function ProductDetailScreen() {
           </View>
         </View>
       )}
+      <View style={{height:20}} />
     </ScrollView>
   );
 }
@@ -350,7 +356,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    marginBottom: 20,
   },
   allergensHeader: {
     flexDirection: 'row',

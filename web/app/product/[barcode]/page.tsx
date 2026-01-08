@@ -11,6 +11,7 @@ import IngredientList from '../../../components/IngredientList';
 import RecommendationCard from '../../../components/RecommendationCard';
 import { getAdditiveInfo, getConcernColor, getConcernText } from '../../../lib/additives';
 import { getAllergenInfo, getAllergenSeverityColor } from '../../../lib/allergens';
+import { ProductService } from '@/lib/services/ProductService';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -46,7 +47,7 @@ export default function ProductDetailPage() {
         );
         
         const productData = await Promise.race([
-          fetchProductFromOpenFoodFacts(barcode),
+          ProductService.getProduct(barcode),
           timeoutPromise
         ]) as any;
         
@@ -60,11 +61,9 @@ export default function ProductDetailPage() {
         // Combine data
         const fullProduct: Product = {
           ...productData,
-          healthScore,
-          createdAt: productData.createdAt || new Date(),
-          updatedAt: productData.updatedAt || new Date(),
+          healthScore
         };
-
+        console.log("Full product data:", JSON.stringify(fullProduct, null, 2));
         setProduct(fullProduct);
       } catch (err: any) {
         console.error('Error fetching product:', {

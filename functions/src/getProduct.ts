@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import axios from 'axios';
 import { OpenFoodFactsProduct } from '../../shared/types/product';
+import { sanitizeForFirestore } from './utils/firestoreSanitizer';
 
 const db = admin.firestore();
 const OPENFOODFACTS_API_URL = 'https://world.openfoodfacts.org/api/v2';
@@ -54,15 +55,15 @@ function parseProduct(offProduct: OpenFoodFactsProduct, barcode: string): any {
     })),
     ingredientsText: product.ingredients_text || '',
     nutrition: {
-      energy: product.nutriments?.energy_kcal_100g,
-      fat: product.nutriments?.fat_100g,
-      saturatedFat: product.nutriments?.['saturated-fat_100g'],
-      carbohydrates: product.nutriments?.carbohydrates_100g,
-      sugars: product.nutriments?.sugars_100g,
-      fiber: product.nutriments?.fiber_100g,
-      proteins: product.nutriments?.proteins_100g,
-      salt: product.nutriments?.salt_100g,
-      sodium: product.nutriments?.sodium_100g,
+      energy: product.nutriments?.energy_kcal_100g ?? 0,
+      fat: product.nutriments?.fat_100g ?? 0,
+      saturatedFat: product.nutriments?.['saturated-fat_100g'] ?? 0,
+      carbohydrates: product.nutriments?.carbohydrates_100g ?? 0,
+      sugars: product.nutriments?.sugars_100g ?? 0,
+      fiber: product.nutriments?.fiber_100g ?? 0,
+      proteins: product.nutriments?.proteins_100g ?? 0,
+      salt: product.nutriments?.salt_100g ?? 0,
+      sodium: product.nutriments?.sodium_100g ?? 0,
     },
     allergens: product.allergens_tags || [],
     traces: product.traces_tags || [],
@@ -71,12 +72,12 @@ function parseProduct(offProduct: OpenFoodFactsProduct, barcode: string): any {
       name: tag.replace('en:', '').toUpperCase(),
       category: 'Additive',
     })),
-    novaGroup: product.nova_group,
-    nutriScore: product.nutriscore_grade?.toUpperCase(),
-    nutriScoreValue: product.nutriscore_score,
-    nutritionGrade: product.nutrition_grades?.toUpperCase(),
+    novaGroup: product.nova_group ?? 0,
+    nutriScore: product.nutriscore_grade?.toUpperCase() ?? '',
+    nutriScoreValue: product.nutriscore_score ?? 0,
+    nutritionGrade: product.nutrition_grades?.toUpperCase() ?? '',
     packaging: product.packaging_tags || [],
-    ecoscore: product.ecoscore_data?.grade,
+    ecoscore: product.ecoscore_data?.grade ?? '',
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
   };
@@ -154,8 +155,12 @@ export const getProduct = functions.https.onRequest(async (req, res) => {
 
     // Parse and save to Firestore
     const productData = parseProduct(offProduct, barcode);
+    
+    // Sanitize data to remove undefined values and replace with defaults
+    const sanitizedData = sanitizeForFirestore(productData);
+    
     try {
-      await productRef.set(productData, { merge: true });
+      await productRef.set(sanitizedData, { merge: true });
     } catch (error: any) {
       functions.logger.warn('Firestore write error, continuing without cache:', error);
       // Continue even if cache write fails

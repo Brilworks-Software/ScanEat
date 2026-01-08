@@ -1,31 +1,16 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
-import { getAuth, Auth } from 'firebase/auth';
-import { getFunctions, Functions } from 'firebase/functions';
+import { getApp } from '@react-native-firebase/app';
+import { getAuth } from '@react-native-firebase/auth';
+import { getFirestore } from '@react-native-firebase/firestore';
+import { getDatabase } from '@react-native-firebase/database';
+import { getStorage } from '@react-native-firebase/storage';
 
-// Firebase configuration
-// These should be set as environment variables
-const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || 'your-api-key',
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || 'scaneat-bc079.firebaseapp.com',
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || 'scaneat-bc079',
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || 'scaneat-bc079.firebasestorage.app',
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || 'your-sender-id',
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || 'your-app-id',
-};
+// Firebase app
+const app = getApp();
 
-// Initialize Firebase
-let app: FirebaseApp;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApps()[0];
-}
+// Modular services
+const auth = getAuth(app);
+const db = getFirestore(app);
+const realtimeDb = getDatabase(app);
+const storage = getStorage(app);
 
-// Initialize services
-export const db: Firestore = getFirestore(app);
-export const auth: Auth = getAuth(app);
-export const functions: Functions = getFunctions(app);
-
-export default app;
-
+export { app, auth, db, realtimeDb, storage };

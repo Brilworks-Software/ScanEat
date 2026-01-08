@@ -4,6 +4,27 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   
+  // Image configuration for external domains
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.openfoodfacts.org',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.firebasestorage.app',
+        pathname: '/**',
+      },
+    ],
+  },
+  
   // Headers for CORS and security
   async headers() {
     return [

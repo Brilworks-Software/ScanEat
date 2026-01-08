@@ -8,12 +8,10 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInAnonymously,
-} from 'firebase/auth';
 import { auth } from '../lib/firebase';
+import { UserService } from '../lib/services/UserService';
+import { StatusBar } from 'expo-status-bar';
+import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInAnonymously} from '@react-native-firebase/auth';
 
 export default function AuthScreen() {
   const [email, setEmail] = useState('');
@@ -50,7 +48,18 @@ export default function AuthScreen() {
 
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      // Create Firebase Auth user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Create user document in Firestore
+      if (userCredential.user) {
+        try {
+          await UserService.createUserDocument(userCredential.user);
+        } catch (docError: any) {
+          // Log error but don't block user from continuing
+          console.error('Failed to create user document:', docError);
+        }
+      }
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {
@@ -71,6 +80,7 @@ export default function AuthScreen() {
 
   return (
     <View style={styles.container}>
+      <StatusBar style="dark" />
       <View style={styles.content}>
         <Text style={styles.title}>Scaneat</Text>
         <Text style={styles.subtitle}>Food Health Scanner</Text>
@@ -84,6 +94,7 @@ export default function AuthScreen() {
             keyboardType="email-address"
             autoCapitalize="none"
             editable={!loading}
+            placeholderTextColor={"#999"}
           />
           <TextInput
             style={styles.input}
@@ -92,6 +103,7 @@ export default function AuthScreen() {
             onChangeText={setPassword}
             secureTextEntry
             editable={!loading}
+            placeholderTextColor={"#999"}
           />
 
           <TouchableOpacity
@@ -180,6 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 16,
     backgroundColor: '#fff',
+    color: '#111827',
   },
   button: {
     borderRadius: 8,

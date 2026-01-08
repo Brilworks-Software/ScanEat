@@ -3,6 +3,7 @@ import { getFirestore, Firestore } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFunctions, Functions } from 'firebase/functions';
 import { getAnalytics, Analytics, isSupported } from 'firebase/analytics';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 // Firebase configuration
 // These should be set as environment variables in production
@@ -24,11 +25,14 @@ if (getApps().length === 0) {
   app = getApps()[0];
 }
 
+
+
 // Initialize services
 export const db: Firestore = getFirestore(app);
 export const auth: Auth = getAuth(app);
 // Initialize Functions with region (us-central1 is default)
 export const functions: Functions = getFunctions(app, 'us-central1');
+export const storage: FirebaseStorage = getStorage(app);
 
 // Verify Firebase initialization
 if (typeof window !== 'undefined') {
@@ -39,7 +43,7 @@ if (typeof window !== 'undefined') {
     hasAuth: !!auth,
     hasFunctions: !!functions,
   });
-}
+} 
 
 // Initialize Analytics (only in browser environment)
 // Analytics is initialized lazily to avoid SSR issues
