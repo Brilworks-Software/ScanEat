@@ -1,6 +1,6 @@
 'use client';
 
-import { HealthScore } from '../../shared/types/product';
+import { HealthScore } from '../types/product';
 
 interface RecommendationCardProps {
   healthScore: HealthScore;
