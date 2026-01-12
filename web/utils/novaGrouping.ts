@@ -2,7 +2,7 @@
  * Utility functions for grouping products by NOVA classification
  */
 
-import { Product } from '../../shared/types/product';
+import { Product } from '../types/product';
 
 export interface NOVAProductGroup {
   group: number;

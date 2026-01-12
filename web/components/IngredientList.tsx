@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Ingredient } from '../../shared/types/product';
+import { Ingredient } from '../types/product';
 import { getIngredientInfo, getIngredientConcernColor, getIngredientConcernText } from '../lib/ingredients';
 
 interface IngredientListProps {

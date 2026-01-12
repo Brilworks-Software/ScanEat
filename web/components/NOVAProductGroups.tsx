@@ -8,7 +8,7 @@
  * Usage Example:
  * ```tsx
  * import { NOVAProductGroups } from '../components/NOVAProductGroups';
- * import { Product } from '../../shared/types/product';
+ * import { Product } from '../types/product';
  *
  * function MyProductList({ products }: { products: Product[] }) {
  *   return <NOVAProductGroups products={products} title="My Product History" />;
@@ -19,7 +19,7 @@
  * and sorts them by health score within each group.
  */
 
-import { Product } from '../../shared/types/product';
+import { Product } from '../types/product';
 import { getGroupedAndSortedProducts, NOVAProductGroup } from '../utils/novaGrouping';
 import ProductCard from './ProductCard';
 
