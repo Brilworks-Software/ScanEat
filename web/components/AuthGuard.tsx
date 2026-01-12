@@ -15,7 +15,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       setIsChecking(false);
       
       // Public routes that don't require authentication
-      const publicRoutes = ['/login', '/signup'];
+      const publicRoutes = ['/login', '/signup', '/forgot-password'];
       const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 
       if (user) {

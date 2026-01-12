@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -14,33 +14,83 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    // Clear form fields when component mounts (e.g., after logout)
+    setEmail('');
+    setPassword('');
+    setError(null);
+    
+    // Clear input fields directly to prevent browser autofill
+    if (emailInputRef.current) {
+      emailInputRef.current.value = '';
+    }
+    if (passwordInputRef.current) {
+      passwordInputRef.current.value = '';
+    }
+    
+    // Also clear after a short delay to catch browser autofill
+    const timeoutId = setTimeout(() => {
+      setEmail('');
+      setPassword('');
+      if (emailInputRef.current) {
+        emailInputRef.current.value = '';
+      }
+      if (passwordInputRef.current) {
+        passwordInputRef.current.value = '';
+      }
+    }, 100);
+    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         router.push('/');
+      } else {
+        // Clear form fields when user logs out
+        setEmail('');
+        setPassword('');
+        setError(null);
+        if (emailInputRef.current) {
+          emailInputRef.current.value = '';
+        }
+        if (passwordInputRef.current) {
+          passwordInputRef.current.value = '';
+        }
       }
     });
-    return unsubscribe;
+    
+    return () => {
+      clearTimeout(timeoutId);
+      unsubscribe();
+    };
   }, [router]);
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!email || !password) {
-      alert('Please enter email and password');
+      setError('Please enter email and password');
       return;
     }
     setLoading(true);
+    setError(null);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       // Create user document in Firestore
-    //   if (userCredential.user) {
-    //     try {
-    //       await UserService.createUserDocument(userCredential.user);
-    //     } catch (docError: any) {
-    //       // Log error but don't block user from continuing
-    //       console.error('Failed to create user document:', docError);
-    //     }
-    //   }
+      //   if (userCredential.user) {
+      //     try {
+      //       await UserService.createUserDocument(userCredential.user);
+      //     } catch (docError: any) {
+      //       // Log error but don't block user from continuing
+      //       console.error('Failed to create user document:', docError);
+      //     }
+      //   }
+      
+      // Explicitly navigate after successful sign-in
+      setEmail("")
+      setPassword("")
+      router.push('/');
     } catch (error: any) {
       let errorMessage = 'Failed to sign in. Please try again.';
       
@@ -63,7 +113,6 @@ export default function LoginPage() {
       }
       
       setError(errorMessage);
-    } finally {
       setLoading(false);
     }
   };
@@ -105,6 +154,7 @@ export default function LoginPage() {
                 Email Address
               </label>
               <input
+                ref={emailInputRef}
                 id="email"
                 name="email"
                 type="email"
@@ -112,7 +162,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400 text-black"
                 placeholder="you@example.com"
               />
             </div>
@@ -123,6 +173,7 @@ export default function LoginPage() {
               </label>
               <div className="relative">
                 <input
+                  ref={passwordInputRef}
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
@@ -131,7 +182,7 @@ export default function LoginPage() {
                   
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12 placeholder:text-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12 placeholder:text-gray-400 text-black"
                   placeholder="Enter your password"
                 />
                 <button
@@ -154,7 +205,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <input
                   id="remember-me"
                   name="remember-me"
@@ -164,8 +215,16 @@ export default function LoginPage() {
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                   Remember me
                 </label>
-              </div>
-              <Link href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+              </div> */}
+              <div></div>
+              <Link 
+                href="/forgot-password" 
+                className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                onClick={(e) => {
+                  // Prevent form submission if link is clicked
+                  e.stopPropagation();
+                }}
+              >
                 Forgot password?
               </Link>
             </div>

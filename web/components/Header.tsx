@@ -21,6 +21,12 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
+      const confirm = window.confirm('Are you sure you want to log out?');
+      if (!confirm) {
+
+        setIsLoggingOut(false);
+        return;
+      }
       await signOut(auth);
       router.push('/login');
     } catch (error: any) {
