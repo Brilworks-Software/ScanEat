@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { ProductService } from '../lib/services/ProductService';
-import { Product } from '../../shared/types/product';
+import { Product } from '../types/product';
 
 /**
  * Hook to fetch and analyze product data using TanStack Query

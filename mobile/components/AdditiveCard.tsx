@@ -17,6 +17,24 @@ export default function AdditiveCard({ additive }: AdditiveCardProps) {
   const concernColors = getConcernColors(concern);
   const concernText = getConcernText(concern);
 
+  // Helper function to format numbers in text strings to 2 decimal places
+  const formatNumbersInText = (text: string): string => {
+    // Match decimal numbers (e.g., 25.5, 10.123, 0.3)
+    // Format them to 2 decimal places
+    return text.replace(/(\d+\.\d+)/g, (match, p1, offset, fullString) => {
+      // Check if this number is part of an additive code (E followed by numbers)
+      const beforeMatch = fullString.substring(Math.max(0, offset - 2), offset);
+      if (beforeMatch.match(/E\d*$/)) {
+        return match; // Don't format if it's part of an additive code like E102
+      }
+      const num = parseFloat(match);
+      if (!isNaN(num)) {
+        return num.toFixed(2);
+      }
+      return match;
+    });
+  };
+
   return (
     <View style={styles.additiveCard}>
       {/* Additive Header */}
@@ -37,7 +55,7 @@ export default function AdditiveCard({ additive }: AdditiveCardProps) {
               <Text style={styles.categoryText}>
                 {additiveInfo.category}
               </Text>
-              <Text style={styles.additiveDescription}>{additiveInfo.description}</Text>
+              <Text style={styles.additiveDescription}>{formatNumbersInText(additiveInfo.description)}</Text>
             </View>
 
             {/* Why Avoid */}
@@ -51,7 +69,7 @@ export default function AdditiveCard({ additive }: AdditiveCardProps) {
                   {additiveInfo.whyAvoid.map((reason, idx) => (
                     <View key={idx} style={styles.listItem}>
                       <Text style={styles.listBulletRed}>•</Text>
-                      <Text style={styles.listText}>{reason}</Text>
+                      <Text style={styles.listText}>{formatNumbersInText(reason)}</Text>
                     </View>
                   ))}
                 </View>
@@ -69,7 +87,7 @@ export default function AdditiveCard({ additive }: AdditiveCardProps) {
                   {additiveInfo.healthEffects.map((effect, idx) => (
                     <View key={idx} style={styles.listItem}>
                       <Text style={styles.listBulletOrange}>•</Text>
-                      <Text style={styles.listText}>{effect}</Text>
+                      <Text style={styles.listText}>{formatNumbersInText(effect)}</Text>
                     </View>
                   ))}
                 </View>
@@ -87,7 +105,7 @@ export default function AdditiveCard({ additive }: AdditiveCardProps) {
                   {additiveInfo.benefits.map((benefit, idx) => (
                     <View key={idx} style={styles.listItem}>
                       <Text style={styles.listBulletGreen}>✓</Text>
-                      <Text style={styles.listText}>{benefit}</Text>
+                      <Text style={styles.listText}>{formatNumbersInText(benefit)}</Text>
                     </View>
                   ))}
                 </View>
@@ -101,7 +119,7 @@ export default function AdditiveCard({ additive }: AdditiveCardProps) {
                   <Text style={styles.sectionTitleBlue}>✓</Text>
                   <Text style={styles.sectionTitleBlue}>Better Alternatives</Text>
                 </View>
-                <Text style={styles.alternativesText}>{additiveInfo.alternatives}</Text>
+                <Text style={styles.alternativesText}>{formatNumbersInText(additiveInfo.alternatives)}</Text>
               </View>
             )}
           </>

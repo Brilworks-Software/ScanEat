@@ -18,7 +18,8 @@
       "bundleIdentifier": "com.brilworks.scaneat",
       "buildNumber": "1.0.0",
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on food products."
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on food products.",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "googleServicesFile": "./GoogleService-Info.plist"
     },
@@ -30,6 +31,7 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
+        "CAMERA",
         "CAMERA"
       ],
       "edgeToEdgeEnabled": true,
@@ -43,8 +45,15 @@
     },
     "extra": {
       "eas": {
-        "projectId": "91c6317f-d56b-408a-8342-595a5b8fbd03"
+        "projectId": "16826cab-56d6-4c55-9440-f6e201747ecd"
       }
+    },
+    "owner": "brilworksdigitalmvp",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/16826cab-56d6-4c55-9440-f6e201747ecd"
     }
   }
 }

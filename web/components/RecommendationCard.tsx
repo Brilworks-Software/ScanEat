@@ -7,6 +7,24 @@ interface RecommendationCardProps {
 }
 
 export default function RecommendationCard({ healthScore }: RecommendationCardProps) {
+  // Helper function to format numbers in text strings to 2 decimal places
+  const formatNumbersInText = (text: string): string => {
+    // Match decimal numbers (e.g., 25.5, 10.123, 0.3)
+    // Format them to 2 decimal places
+    return text.replace(/(\d+\.\d+)/g, (match, p1, offset, fullString) => {
+      // Check if this number is part of an additive code (E followed by numbers)
+      const beforeMatch = fullString.substring(Math.max(0, offset - 2), offset);
+      if (beforeMatch.match(/E\d*$/)) {
+        return match; // Don't format if it's part of an additive code like E102
+      }
+      const num = parseFloat(match);
+      if (!isNaN(num)) {
+        return num.toFixed(2);
+      }
+      return match;
+    });
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition-shadow">
       <div className="flex items-center gap-3 mb-6">
@@ -33,7 +51,7 @@ export default function RecommendationCard({ healthScore }: RecommendationCardPr
             {healthScore.recommendations.map((rec, index) => (
               <li key={index} className="flex items-start gap-3 bg-green-50 rounded-lg p-3 border border-green-200">
                 <span className="text-green-600 mt-0.5 font-bold">✓</span>
-                <span className="text-sm text-gray-800 flex-1">{rec}</span>
+                <span className="text-sm text-gray-800 flex-1">{formatNumbersInText(rec)}</span>
               </li>
             ))}
           </ul>
@@ -55,7 +73,7 @@ export default function RecommendationCard({ healthScore }: RecommendationCardPr
             {healthScore.warnings.map((warning, index) => (
               <li key={index} className="flex items-start gap-3 bg-red-50 rounded-lg p-3 border border-red-200">
                 <span className="text-red-600 mt-0.5 font-bold">⚠</span>
-                <span className="text-sm text-gray-800 flex-1">{warning}</span>
+                <span className="text-sm text-gray-800 flex-1">{formatNumbersInText(warning)}</span>
               </li>
             ))}
           </ul>
@@ -91,7 +109,7 @@ export default function RecommendationCard({ healthScore }: RecommendationCardPr
                     {reason.impact > 0 ? '+' : ''}{reason.impact}
                   </span> */}
                 </div>
-                <p className="text-xs mt-1 opacity-90">{reason.message}</p>
+                <p className="text-xs mt-1 opacity-90">{formatNumbersInText(reason.message)}</p>
               </div>
             ))}
           </div>

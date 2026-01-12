@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Product } from '../../shared/types/product';
+import { Product } from '../types/product';
 
 interface HealthScoreCardProps {
   product: Product;
@@ -79,7 +79,11 @@ export default function HealthScoreCard({ product }: HealthScoreCardProps) {
               { backgroundColor: getGradeColor(product.healthScore.grade) },
             ]}
           >
-            <Text style={styles.scoreText}>{product.healthScore.score}</Text>
+            <Text style={styles.scoreText}>
+              {typeof product.healthScore.score === 'number' 
+                ? product.healthScore.score.toFixed(0) 
+                : product.healthScore.score}
+            </Text>
           </View>
           {/* Progress Ring */}
           <View style={styles.progressRing}>

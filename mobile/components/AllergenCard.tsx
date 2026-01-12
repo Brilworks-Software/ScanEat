@@ -13,6 +13,24 @@ export default function AllergenCard({ allergen, isExpanded, onToggle }: Allerge
   const cleanAllergen = allergen.replace('en:', '').replace(/_/g, ' ');
   const allergenInfo = getAllergenInfo(cleanAllergen);
 
+  // Helper function to format numbers in text strings to 2 decimal places
+  const formatNumbersInText = (text: string): string => {
+    // Match decimal numbers (e.g., 25.5, 10.123, 0.3)
+    // Format them to 2 decimal places
+    return text.replace(/(\d+\.\d+)/g, (match, p1, offset, fullString) => {
+      // Check if this number is part of an additive code (E followed by numbers)
+      const beforeMatch = fullString.substring(Math.max(0, offset - 2), offset);
+      if (beforeMatch.match(/E\d*$/)) {
+        return match; // Don't format if it's part of an additive code like E102
+      }
+      const num = parseFloat(match);
+      if (!isNaN(num)) {
+        return num.toFixed(2);
+      }
+      return match;
+    });
+  };
+
   if (!allergenInfo) {
     // Fallback for allergens not in database
     return (
@@ -59,7 +77,7 @@ export default function AllergenCard({ allergen, isExpanded, onToggle }: Allerge
             {/* Description */}
             <View style={styles.allergenSection}>
               <Text style={styles.allergenSectionTitle}>Description</Text>
-              <Text style={styles.allergenSectionText}>{allergenInfo.description}</Text>
+              <Text style={styles.allergenSectionText}>{formatNumbersInText(allergenInfo.description)}</Text>
             </View>
 
             {/* Symptoms */}
@@ -69,7 +87,7 @@ export default function AllergenCard({ allergen, isExpanded, onToggle }: Allerge
                 {allergenInfo.symptoms.map((symptom, symptomIndex) => (
                   <View key={symptomIndex} style={styles.allergenListItem}>
                     <Text style={styles.allergenBullet}>•</Text>
-                    <Text style={styles.allergenListText}>{symptom}</Text>
+                    <Text style={styles.allergenListText}>{formatNumbersInText(symptom)}</Text>
                   </View>
                 ))}
               </View>
@@ -82,7 +100,7 @@ export default function AllergenCard({ allergen, isExpanded, onToggle }: Allerge
                 {allergenInfo.crossContamination.map((risk, riskIndex) => (
                   <View key={riskIndex} style={styles.allergenListItem}>
                     <Text style={styles.allergenBullet}>•</Text>
-                    <Text style={styles.allergenListText}>{risk}</Text>
+                    <Text style={styles.allergenListText}>{formatNumbersInText(risk)}</Text>
                   </View>
                 ))}
               </View>
@@ -95,7 +113,7 @@ export default function AllergenCard({ allergen, isExpanded, onToggle }: Allerge
                 {allergenInfo.management.map((advice, adviceIndex) => (
                   <View key={adviceIndex} style={styles.allergenListItem}>
                     <Text style={styles.allergenBullet}>•</Text>
-                    <Text style={styles.allergenListText}>{advice}</Text>
+                    <Text style={styles.allergenListText}>{formatNumbersInText(advice)}</Text>
                   </View>
                 ))}
               </View>

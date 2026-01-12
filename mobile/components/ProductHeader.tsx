@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
-import { Product } from '../../shared/types/product';
+import { Product } from '../types/product';
 
 interface ProductHeaderProps {
   product: Product;

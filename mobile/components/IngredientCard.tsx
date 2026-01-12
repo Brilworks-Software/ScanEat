@@ -24,6 +24,24 @@ export default function IngredientCard({ ingredient, isExpanded, onToggle }: Ing
   const concernColor = getConcernColor(concern);
   const concernText = getIngredientConcernText(concern);
 
+  // Helper function to format numbers in text strings to 2 decimal places
+  const formatNumbersInText = (text: string): string => {
+    // Match decimal numbers (e.g., 25.5, 10.123, 0.3)
+    // Format them to 2 decimal places
+    return text.replace(/(\d+\.\d+)/g, (match, p1, offset, fullString) => {
+      // Check if this number is part of an additive code (E followed by numbers)
+      const beforeMatch = fullString.substring(Math.max(0, offset - 2), offset);
+      if (beforeMatch.match(/E\d*$/)) {
+        return match; // Don't format if it's part of an additive code like E102
+      }
+      const num = parseFloat(match);
+      if (!isNaN(num)) {
+        return num.toFixed(2);
+      }
+      return match;
+    });
+  };
+
   const getIngredientColor = (ingredient: any, info: IngredientInfo | null) => {
     if (ingredient.allergen || info?.dietaryInfo?.allergen) {
       return { backgroundColor: '#FEF2F2', borderColor: '#FECACA' };
@@ -109,7 +127,7 @@ export default function IngredientCard({ ingredient, isExpanded, onToggle }: Ing
             {/* Description */}
             <View style={styles.sectionItem}>
               <Text style={styles.categoryText}>{info.category.toUpperCase()}</Text>
-              <Text style={styles.descriptionText}>{info.description}</Text>
+              <Text style={styles.descriptionText}>{formatNumbersInText(info.description)}</Text>
             </View>
 
             {/* Why Consider */}
@@ -123,7 +141,7 @@ export default function IngredientCard({ ingredient, isExpanded, onToggle }: Ing
                   {info.whyConsider.map((reason, idx) => (
                     <View key={idx} style={styles.listItem}>
                       <Text style={styles.listBulletOrange}>•</Text>
-                      <Text style={styles.listText}>{reason}</Text>
+                      <Text style={styles.listText}>{formatNumbersInText(reason)}</Text>
                     </View>
                   ))}
                 </View>
@@ -141,7 +159,7 @@ export default function IngredientCard({ ingredient, isExpanded, onToggle }: Ing
                   {info.healthEffects.map((effect, idx) => (
                     <View key={idx} style={styles.listItem}>
                       <Text style={styles.listBulletRed}>•</Text>
-                      <Text style={styles.listText}>{effect}</Text>
+                      <Text style={styles.listText}>{formatNumbersInText(effect)}</Text>
                     </View>
                   ))}
                 </View>
@@ -159,7 +177,7 @@ export default function IngredientCard({ ingredient, isExpanded, onToggle }: Ing
                   {info.benefits.map((benefit, idx) => (
                     <View key={idx} style={styles.listItem}>
                       <Text style={styles.listBulletGreen}>✓</Text>
-                      <Text style={styles.listText}>{benefit}</Text>
+                      <Text style={styles.listText}>{formatNumbersInText(benefit)}</Text>
                     </View>
                   ))}
                 </View>

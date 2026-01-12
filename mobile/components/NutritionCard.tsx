@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Product } from '../../shared/types/product';
+import { Product } from '../types/product';
 
 interface NutritionCardProps {
   nutrition: Product['nutrition'];
@@ -8,6 +8,12 @@ interface NutritionCardProps {
 
 export default function NutritionCard({ nutrition }: NutritionCardProps) {
   if (!nutrition) return null;
+
+  // Helper function to format values to 2 decimal places
+  const formatValue = (value: number | undefined | null): string => {
+    const numValue = typeof value === 'number' ? value : 0;
+    return numValue.toFixed(2);
+  };
 
   return (
     <View style={styles.nutritionCard}>
@@ -19,56 +25,56 @@ export default function NutritionCard({ nutrition }: NutritionCardProps) {
         <View style={styles.nutritionItemCard}>
           <View style={[styles.nutritionItemBackground, styles.energyBackground]}>
             <Text style={[styles.nutritionItemLabel, styles.energyText]}>Energy</Text>
-            <Text style={[styles.nutritionItemValue, styles.energyText]}>{nutrition.energy || 0}</Text>
+            <Text style={[styles.nutritionItemValue, styles.energyText]}>{formatValue(nutrition.energy)}</Text>
             <Text style={[styles.nutritionItemUnit, styles.energyText]}>kcal</Text>
           </View>
         </View>
         <View style={styles.nutritionItemCard}>
           <View style={[styles.nutritionItemBackground, styles.fatBackground]}>
             <Text style={[styles.nutritionItemLabel, styles.fatText]}>Fat</Text>
-            <Text style={[styles.nutritionItemValue, styles.fatText]}>{nutrition.fat || 0}</Text>
+            <Text style={[styles.nutritionItemValue, styles.fatText]}>{formatValue(nutrition.fat)}</Text>
             <Text style={[styles.nutritionItemUnit, styles.fatText]}>grams</Text>
           </View>
         </View>
         <View style={styles.nutritionItemCard}>
           <View style={[styles.nutritionItemBackground, styles.carbsBackground]}>
             <Text style={[styles.nutritionItemLabel, styles.carbsText]}>Carbs</Text>
-            <Text style={[styles.nutritionItemValue, styles.carbsText]}>{nutrition.carbohydrates || 0}</Text>
+            <Text style={[styles.nutritionItemValue, styles.carbsText]}>{formatValue(nutrition.carbohydrates)}</Text>
             <Text style={[styles.nutritionItemUnit, styles.carbsText]}>grams</Text>
           </View>
         </View>
         <View style={styles.nutritionItemCard}>
           <View style={[styles.nutritionItemBackground, styles.proteinBackground]}>
             <Text style={[styles.nutritionItemLabel, styles.proteinText]}>Protein</Text>
-            <Text style={[styles.nutritionItemValue, styles.proteinText]}>{nutrition.proteins || 0}</Text>
+            <Text style={[styles.nutritionItemValue, styles.proteinText]}>{formatValue(nutrition.proteins)}</Text>
             <Text style={[styles.nutritionItemUnit, styles.proteinText]}>grams</Text>
           </View>
         </View>
         <View style={styles.nutritionItemCard}>
           <View style={[styles.nutritionItemBackground, styles.sugarsBackground]}>
             <Text style={[styles.nutritionItemLabel, styles.sugarsText]}>Sugars</Text>
-            <Text style={[styles.nutritionItemValue, styles.sugarsText]}>{nutrition.sugars || 0}</Text>
+            <Text style={[styles.nutritionItemValue, styles.sugarsText]}>{formatValue(nutrition.sugars)}</Text>
             <Text style={[styles.nutritionItemUnit, styles.sugarsText]}>grams</Text>
           </View>
         </View>
         <View style={styles.nutritionItemCard}>
           <View style={[styles.nutritionItemBackground, styles.saltBackground]}>
             <Text style={[styles.nutritionItemLabel, styles.saltText]}>Salt</Text>
-            <Text style={[styles.nutritionItemValue, styles.saltText]}>{nutrition.salt || 0}</Text>
+            <Text style={[styles.nutritionItemValue, styles.saltText]}>{formatValue(nutrition.salt)}</Text>
             <Text style={[styles.nutritionItemUnit, styles.saltText]}>grams</Text>
           </View>
         </View>
         <View style={styles.nutritionItemCard}>
           <View style={[styles.nutritionItemBackground, styles.fiberBackground]}>
             <Text style={[styles.nutritionItemLabel, styles.fiberText]}>Fiber</Text>
-            <Text style={[styles.nutritionItemValue, styles.fiberText]}>{nutrition.fiber || 0}</Text>
+            <Text style={[styles.nutritionItemValue, styles.fiberText]}>{formatValue(nutrition.fiber)}</Text>
             <Text style={[styles.nutritionItemUnit, styles.fiberText]}>grams</Text>
           </View>
         </View>
         <View style={styles.nutritionItemCard}>
           <View style={[styles.nutritionItemBackground, styles.saturatedFatBackground]}>
             <Text style={[styles.nutritionItemLabel, styles.saturatedFatText]}>Saturated Fat</Text>
-            <Text style={[styles.nutritionItemValue, styles.saturatedFatText]}>{nutrition.saturatedFat || 0}</Text>
+            <Text style={[styles.nutritionItemValue, styles.saturatedFatText]}>{formatValue(nutrition.saturatedFat)}</Text>
             <Text style={[styles.nutritionItemUnit, styles.saturatedFatText]}>grams</Text>
           </View>
         </View>

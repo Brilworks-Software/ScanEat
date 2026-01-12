@@ -92,8 +92,8 @@ export default function NutritionAnalysisDetailScreen() {
 
   const formatValue = (value: number | string, unit: string = '') => {
     if (typeof value === 'string') return value;
-    if (value === 0) return '0';
-    return (value || 0).toFixed(1) + unit;
+    const numValue = typeof value === 'number' ? value : 0;
+    return numValue.toFixed(2) + unit;
   };
 
   const NutritionCard = ({
@@ -218,7 +218,7 @@ export default function NutritionAnalysisDetailScreen() {
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
@@ -227,7 +227,7 @@ export default function NutritionAnalysisDetailScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Food Analysis</Text>
         <View style={{ width: 40 }} />
-      </View>
+      </View> */}
 
       {/* Image Preview */}
       <View style={styles.imageContainer}>

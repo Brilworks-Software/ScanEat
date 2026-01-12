@@ -10,7 +10,7 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { TriangleAlert } from "lucide-react-native";
 import { ProductService } from '../lib/services/ProductService';
-import { Product } from '../../shared/types/product';
+import { Product } from '../types/product';
 import ProductHeader from '../components/ProductHeader';
 import HealthScoreCard from '../components/HealthScoreCard';
 import HealthRecommendationsCard from '../components/HealthRecommendationsCard';

@@ -158,8 +158,8 @@ export default function NutritionAnalysisHistoryScreen() {
 
   const formatValue = (value: number | string, unit: string = '') => {
     if (typeof value === 'string') return value;
-    if (value === 0) return '0';
-    return (value || 0).toFixed(0) + unit;
+    const numValue = typeof value === 'number' ? value : 0;
+    return numValue.toFixed(2) + unit;
   };
 
   if (loading) {

@@ -246,7 +246,11 @@ export default function HistoryScreen() {
                   { backgroundColor: getScoreColor(item.score) },
                 ]}
               >
-                <Text style={styles.scoreText}>{item.score}</Text>
+                <Text style={styles.scoreText}>
+                  {typeof item.score === 'number' 
+                    ? item.score.toFixed(0) 
+                    : item.score}
+                </Text>
               </View>
               <Text style={styles.scoreGrade}>
                 {getScoreGrade(item.score)}

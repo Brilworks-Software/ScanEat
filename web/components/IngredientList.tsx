@@ -12,6 +12,24 @@ interface IngredientListProps {
 export default function IngredientList({ ingredients, showWarnings = true }: IngredientListProps) {
   const [expandedIngredients, setExpandedIngredients] = useState<Set<number>>(new Set());
 
+  // Helper function to format numbers in text strings to 2 decimal places
+  const formatNumbersInText = (text: string): string => {
+    // Match decimal numbers (e.g., 25.5, 10.123, 0.3)
+    // Format them to 2 decimal places
+    return text.replace(/(\d+\.\d+)/g, (match, p1, offset, fullString) => {
+      // Check if this number is part of an additive code (E followed by numbers)
+      const beforeMatch = fullString.substring(Math.max(0, offset - 2), offset);
+      if (beforeMatch.match(/E\d*$/)) {
+        return match; // Don't format if it's part of an additive code like E102
+      }
+      const num = parseFloat(match);
+      if (!isNaN(num)) {
+        return num.toFixed(2);
+      }
+      return match;
+    });
+  };
+
   const toggleIngredient = (index: number) => {
     const newExpanded = new Set(expandedIngredients);
     if (newExpanded.has(index)) {
@@ -134,7 +152,7 @@ export default function IngredientList({ ingredients, showWarnings = true }: Ing
                       <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
                         {info.category}
                       </span>
-                      <p className="text-sm text-gray-700">{info.description}</p>
+                      <p className="text-sm text-gray-700">{formatNumbersInText(info.description)}</p>
                     </div>
 
                     {/* Why Consider */}
@@ -150,7 +168,7 @@ export default function IngredientList({ ingredients, showWarnings = true }: Ing
                           {info.whyConsider.map((reason, idx) => (
                             <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                               <span className="text-orange-500 mt-1">•</span>
-                              <span>{reason}</span>
+                              <span>{formatNumbersInText(reason)}</span>
                             </li>
                           ))}
                         </ul>
@@ -170,7 +188,7 @@ export default function IngredientList({ ingredients, showWarnings = true }: Ing
                           {info.healthEffects.map((effect, idx) => (
                             <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                               <span className="text-red-500 mt-1">•</span>
-                              <span>{effect}</span>
+                              <span>{formatNumbersInText(effect)}</span>
                             </li>
                           ))}
                         </ul>
@@ -190,7 +208,7 @@ export default function IngredientList({ ingredients, showWarnings = true }: Ing
                           {info.benefits.map((benefit, idx) => (
                             <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                               <span className="text-green-500 mt-1">✓</span>
-                              <span>{benefit}</span>
+                              <span>{formatNumbersInText(benefit)}</span>
                             </li>
                           ))}
                         </ul>

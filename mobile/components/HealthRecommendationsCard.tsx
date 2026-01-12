@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { BadgeCheck, Check, TriangleAlert, ChartNoAxesColumnIncreasing } from "lucide-react-native";
-import { Product } from '../../shared/types/product';
+import { Product } from '../types/product';
 
 interface HealthRecommendationsCardProps {
   product: Product;
@@ -13,6 +13,24 @@ export default function HealthRecommendationsCard({ product }: HealthRecommendat
         (product.healthScore.reasons && product.healthScore.reasons.length > 0))) {
     return null;
   }
+
+  // Helper function to format numbers in text strings to 2 decimal places
+  const formatNumbersInText = (text: string): string => {
+    // Match decimal numbers (e.g., 25.5, 10.123, 0.3)
+    // Format them to 2 decimal places
+    return text.replace(/(\d+\.\d+)/g, (match, p1, offset, fullString) => {
+      // Check if this number is part of an additive code (E followed by numbers)
+      const beforeMatch = fullString.substring(Math.max(0, offset - 2), offset);
+      if (beforeMatch.match(/E\d*$/)) {
+        return match; // Don't format if it's part of an additive code like E102
+      }
+      const num = parseFloat(match);
+      if (!isNaN(num)) {
+        return num.toFixed(2);
+      }
+      return match;
+    });
+  };
 
   return (
     <View style={styles.healthRecommendationsCard}>
@@ -36,7 +54,7 @@ export default function HealthRecommendationsCard({ product }: HealthRecommendat
             {product.healthScore.recommendations.map((rec, index) => (
               <View key={`rec-${index}`} style={styles.recommendationItem}>
                 <Check size={16} color={"#16A34A"} />
-                <Text style={styles.recommendationText}>{rec}</Text>
+                <Text style={styles.recommendationText}>{formatNumbersInText(rec)}</Text>
               </View>
             ))}
           </View>
@@ -56,7 +74,7 @@ export default function HealthRecommendationsCard({ product }: HealthRecommendat
             {product.healthScore.warnings.map((warning, index) => (
               <View key={`warn-${index}`} style={styles.warningItem}>
                 <TriangleAlert color={"#DC2626"} size={16}/>
-                <Text style={styles.warningText}>{warning}</Text>
+                <Text style={styles.warningText}>{formatNumbersInText(warning)}</Text>
               </View>
             ))}
           </View>
@@ -88,7 +106,7 @@ export default function HealthRecommendationsCard({ product }: HealthRecommendat
                     {reason.category.replace(/([A-Z])/g, ' $1').trim()}:
                   </Text>
                 </View>
-                <Text style={styles.analysisMessage}>{reason.message}</Text>
+                <Text style={styles.analysisMessage}>{formatNumbersInText(reason.message)}</Text>
               </View>
             ))}
           </View>

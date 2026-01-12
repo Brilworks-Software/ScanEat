@@ -31,6 +31,24 @@ export default function ProductDetailPage() {
     return numValue.toFixed(2);
   };
 
+  // Helper function to format numbers in text strings to 2 decimal places
+  const formatNumbersInText = (text: string): string => {
+    // Match decimal numbers (e.g., 25.5, 10.123, 0.3)
+    // Format them to 2 decimal places
+    return text.replace(/(\d+\.\d+)/g, (match, p1, offset, fullString) => {
+      // Check if this number is part of an additive code (E followed by numbers)
+      const beforeMatch = fullString.substring(Math.max(0, offset - 2), offset);
+      if (beforeMatch.match(/E\d*$/)) {
+        return match; // Don't format if it's part of an additive code like E102
+      }
+      const num = parseFloat(match);
+      if (!isNaN(num)) {
+        return num.toFixed(2);
+      }
+      return match;
+    });
+  };
+
   const toggleAllergenDetails = (index: number) => {
     setExpandedAllergens(prev => {
       const newSet = new Set(prev);
@@ -333,7 +351,7 @@ export default function ProductDetailPage() {
                                 {/* Description */}
                                 <div>
                                   <h4 className="font-semibold text-sm text-gray-900 mb-1">Description</h4>
-                                  <p className="text-sm text-gray-700">{allergenInfo.description}</p>
+                                  <p className="text-sm text-gray-700">{formatNumbersInText(allergenInfo.description)}</p>
                                 </div>
 
                                 {/* Symptoms */}
@@ -341,7 +359,7 @@ export default function ProductDetailPage() {
                                   <h4 className="font-semibold text-sm text-gray-900 mb-1">Symptoms</h4>
                                   <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                                     {allergenInfo.symptoms.map((symptom, symptomIndex) => (
-                                      <li key={symptomIndex}>{symptom}</li>
+                                      <li key={symptomIndex}>{formatNumbersInText(symptom)}</li>
                                     ))}
                                   </ul>
                                 </div>
@@ -351,7 +369,7 @@ export default function ProductDetailPage() {
                                   <h4 className="font-semibold text-sm text-gray-900 mb-1">Cross-contamination Risks</h4>
                                   <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                                     {allergenInfo.crossContamination.map((risk, riskIndex) => (
-                                      <li key={riskIndex}>{risk}</li>
+                                      <li key={riskIndex}>{formatNumbersInText(risk)}</li>
                                     ))}
                                   </ul>
                                 </div>
@@ -361,7 +379,7 @@ export default function ProductDetailPage() {
                                   <h4 className="font-semibold text-sm text-gray-900 mb-1">Management</h4>
                                   <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                                     {allergenInfo.management.map((advice, adviceIndex) => (
-                                      <li key={adviceIndex}>{advice}</li>
+                                      <li key={adviceIndex}>{formatNumbersInText(advice)}</li>
                                     ))}
                                   </ul>
                                 </div>
@@ -439,7 +457,7 @@ export default function ProductDetailPage() {
                                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                                   {additiveInfo.category}
                                 </span>
-                                <p className="text-sm text-gray-700 mt-1">{additiveInfo.description}</p>
+                                <p className="text-sm text-gray-700 mt-1">{formatNumbersInText(additiveInfo.description)}</p>
                               </div>
                               
                               {/* Why Avoid */}
@@ -455,7 +473,7 @@ export default function ProductDetailPage() {
                                     {additiveInfo.whyAvoid.map((reason, idx) => (
                                       <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                                         <span className="text-red-500 mt-1">•</span>
-                                        <span>{reason}</span>
+                                        <span>{formatNumbersInText(reason)}</span>
                                       </li>
                                     ))}
                                   </ul>
@@ -475,7 +493,7 @@ export default function ProductDetailPage() {
                                     {additiveInfo.healthEffects.map((effect, idx) => (
                                       <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                                         <span className="text-orange-500 mt-1">•</span>
-                                        <span>{effect}</span>
+                                        <span>{formatNumbersInText(effect)}</span>
                                       </li>
                                     ))}
                                   </ul>
@@ -495,7 +513,7 @@ export default function ProductDetailPage() {
                                     {additiveInfo.benefits.map((benefit, idx) => (
                                       <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                                         <span className="text-green-500 mt-1">✓</span>
-                                        <span>{benefit}</span>
+                                        <span>{formatNumbersInText(benefit)}</span>
                                       </li>
                                     ))}
                                   </ul>
@@ -511,7 +529,7 @@ export default function ProductDetailPage() {
                                     </svg>
                                     Better Alternatives
                                   </h4>
-                                  <p className="text-sm text-gray-700">{additiveInfo.alternatives}</p>
+                                  <p className="text-sm text-gray-700">{formatNumbersInText(additiveInfo.alternatives)}</p>
                                 </div>
                               )}
                             </>
