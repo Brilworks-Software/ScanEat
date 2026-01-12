@@ -56,7 +56,7 @@ export default function NOVAProductGroups({ products, title = "Products by NOVA 
       )}
 
       {groupedProducts.map((group: NOVAProductGroup) => (
-        <div key={group.group} className={`rounded-lg border-2 p-6 ${group.bgColor} ${group.borderColor}`}>
+        <div key={group.group} className={`rounded-lg border-2 p-6 ${group.bgColor}`}>
           {/* Group Header */}
           <div className="mb-4">
             <div className="flex items-center gap-3 mb-2">
