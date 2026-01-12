@@ -23,6 +23,14 @@ export default function ProductDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [expandedAllergens, setExpandedAllergens] = useState<Set<number>>(new Set());
 
+  // Helper function to format nutrition values to 2 decimal places
+  const formatNutritionValue = (value: number | string | undefined): string => {
+    if (value === undefined || value === null) return '0.00';
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(numValue)) return '0.00';
+    return numValue.toFixed(2);
+  };
+
   const toggleAllergenDetails = (index: number) => {
     setExpandedAllergens(prev => {
       const newSet = new Set(prev);
@@ -90,12 +98,11 @@ export default function ProductDetailPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <svg className="w-8 h-8 text-blue-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-              </svg>
-            </div>
+            <img 
+              src="/favicon.png" 
+              alt="Loading" 
+              className="w-16 h-16 mx-auto mb-4 animate-spin"
+            />
           </div>
           <p className="text-lg font-medium text-gray-700 mb-2">Analyzing Product</p>
           <p className="text-sm text-gray-500">Fetching nutrition data and calculating health score...</p>
@@ -209,52 +216,52 @@ export default function ProductDetailPage() {
                   
                     <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
                       <p className="text-xs font-medium text-orange-700 mb-1">Energy</p>
-                      <p className="text-2xl font-bold text-orange-900">{product.nutrition.energy || 0}</p>
+                      <p className="text-2xl font-bold text-orange-900">{formatNutritionValue(product.nutrition.energy)}</p>
                       <p className="text-xs text-orange-600 mt-1">kcal</p>
                     </div>
                   
                     <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
                       <p className="text-xs font-medium text-yellow-700 mb-1">Fat</p>
-                      <p className="text-2xl font-bold text-yellow-900">{product.nutrition.fat || 0}</p>
+                      <p className="text-2xl font-bold text-yellow-900">{formatNutritionValue(product.nutrition.fat)}</p>
                       <p className="text-xs text-yellow-600 mt-1">grams</p>
                     </div>
                   
                     <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
                       <p className="text-xs font-medium text-blue-700 mb-1">Carbs</p>
-                      <p className="text-2xl font-bold text-blue-900">{product.nutrition.carbohydrates || 0}</p>
+                      <p className="text-2xl font-bold text-blue-900">{formatNutritionValue(product.nutrition.carbohydrates)}</p>
                       <p className="text-xs text-blue-600 mt-1">grams</p>
                     </div>
                   
                     <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
                       <p className="text-xs font-medium text-green-700 mb-1">Protein</p>
-                      <p className="text-2xl font-bold text-green-900">{product.nutrition.proteins || 0}</p>
+                      <p className="text-2xl font-bold text-green-900">{formatNutritionValue(product.nutrition.proteins)}</p>
                       <p className="text-xs text-green-600 mt-1">grams</p>
                     </div>
                   
                   
                     <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 border border-red-200">
                       <p className="text-xs font-medium text-red-700 mb-1">Sugars</p>
-                      <p className="text-2xl font-bold text-red-900">{product.nutrition.sugars || 0}</p>
+                      <p className="text-2xl font-bold text-red-900">{formatNutritionValue(product.nutrition.sugars)}</p>
                       <p className="text-xs text-red-600 mt-1">grams</p>
                     </div>
                   
                     <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
                       <p className="text-xs font-medium text-purple-700 mb-1">Salt</p>
-                      <p className="text-2xl font-bold text-purple-900">{product.nutrition.salt || 0}</p>
+                      <p className="text-2xl font-bold text-purple-900">{formatNutritionValue(product.nutrition.salt)}</p>
                       <p className="text-xs text-purple-600 mt-1">grams</p>
                     </div>
                   
                  
                     <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
                       <p className="text-xs font-medium text-emerald-700 mb-1">Fiber</p>
-                      <p className="text-2xl font-bold text-emerald-900">{product.nutrition.fiber || 0}</p>
+                      <p className="text-2xl font-bold text-emerald-900">{formatNutritionValue(product.nutrition.fiber)}</p>
                       <p className="text-xs text-emerald-600 mt-1">grams</p>
                     </div>
                   
                   
                     <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200">
                       <p className="text-xs font-medium text-amber-700 mb-1">Saturated Fat</p>
-                      <p className="text-2xl font-bold text-amber-900">{product.nutrition.saturatedFat || 0}</p>
+                      <p className="text-2xl font-bold text-amber-900">{formatNutritionValue(product.nutrition.saturatedFat)}</p>
                       <p className="text-xs text-amber-600 mt-1">grams</p>
                     </div>
                   

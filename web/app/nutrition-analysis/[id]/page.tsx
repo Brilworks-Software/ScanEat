@@ -144,6 +144,7 @@ export default function NutritionAnalysisDetailPage() {
   }
 
   const { detectedFood } = analysis;
+  const hasNoFoodItems = !detectedFood.items || detectedFood.items.length === 0;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -183,46 +184,69 @@ export default function NutritionAnalysisDetailPage() {
             </div>
           )}
 
-          {/* Results Section */}
-          <div className="space-y-8">
-            {/* Total Nutrition Summary */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Total Nutrition Summary</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                <NutritionCard title="Total Calories" value={detectedFood.totalCalories} unit=" cal" color="orange" />
-                <NutritionCard title="Total Protein" value={detectedFood.totalProtein} unit="g" color="blue" />
-                <NutritionCard title="Total Carbs" value={detectedFood.totalCarbs} unit="g" color="green" />
-                <NutritionCard title="Total Fat" value={detectedFood.totalFat} unit="g" color="yellow" />
-                <NutritionCard title="Total Fiber" value={detectedFood.totalFiber} unit="g" color="purple" />
-                <NutritionCard title="Total Weight" value={detectedFood.totalQuantityGrams} unit="g" color="gray" />
+          {/* No Food Detected UI */}
+          {hasNoFoodItems ? (
+            <div className="flex items-center justify-center min-h-[60vh]">
+              <div className="max-w-md mx-auto bg-white/90 backdrop-blur-md rounded-2xl p-12 shadow-xl border border-gray-100 text-center">
+                <div className="mb-6">
+                  <div className="w-32 h-32 mx-auto bg-linear-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
+                    <svg className="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-4">No Food Detected</h2>
+                <p className="text-gray-600 text-lg mb-2">
+                  We couldn't detect any food items in this image.
+                </p>
+                <p className="text-gray-500 text-sm mb-8">
+                  Please try uploading a clearer image with visible food items.
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => router.push('/nutrition-analysis')}
+                    className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors font-medium"
+                  >
+                    Start New Analysis
+                  </button>
+                  <button
+                    onClick={() => router.back()}
+                    className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  >
+                    Go Back
+                  </button>
+                </div>
               </div>
             </div>
-
-            {/* Individual Food Items */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-                Detected Food Items ({detectedFood.items.length})
-              </h2>
-              {detectedFood.items.length === 0 ? (
-                <div className="bg-white/90 backdrop-blur-md rounded-2xl p-12 shadow-lg border border-gray-100 text-center">
-                  <svg className="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">No Food Items Detected</h3>
-                  <p className="text-gray-600">Try uploading a clearer image of food items.</p>
+          ) : (
+            /* Results Section - Only show when food items are detected */
+            <div className="space-y-8">
+              {/* Total Nutrition Summary */}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Total Nutrition Summary</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  <NutritionCard title="Total Calories" value={detectedFood.totalCalories} unit=" cal" color="orange" />
+                  <NutritionCard title="Total Protein" value={detectedFood.totalProtein} unit="g" color="blue" />
+                  <NutritionCard title="Total Carbs" value={detectedFood.totalCarbs} unit="g" color="green" />
+                  <NutritionCard title="Total Fat" value={detectedFood.totalFat} unit="g" color="yellow" />
+                  <NutritionCard title="Total Fiber" value={detectedFood.totalFiber} unit="g" color="purple" />
+                  <NutritionCard title="Total Weight" value={detectedFood.totalQuantityGrams} unit="g" color="gray" />
                 </div>
-              ) : (
+              </div>
+
+              {/* Individual Food Items */}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+                  Detected Food Items ({detectedFood.items.length})
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {detectedFood.items.map((item, index) => (
                     <FoodItemCard key={item.id || index} item={item} />
                   ))}
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-
-        
-          
+          )}
         </div>
       </div>
     </div>
