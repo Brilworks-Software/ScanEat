@@ -18,6 +18,7 @@ import NutritionCard from '../components/NutritionCard';
 import IngredientCard from '../components/IngredientCard';
 import AdditiveCard from '../components/AdditiveCard';
 import AllergenCard from '../components/AllergenCard';
+import FoodNotFound from '../components/FoodNotFound';
 import { analyzeProductHealth } from '../lib/healthAnalysis';
 
 
@@ -106,12 +107,7 @@ export default function ProductDetailScreen() {
   }
 
   if (error || !product) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorTitle}>Product Not Found</Text>
-        <Text style={styles.errorText}>{error || 'The product could not be found.'}</Text>
-      </View>
-    );
+    return <FoodNotFound error={error} />;
   }
 
   return (
@@ -223,24 +219,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     color: '#6B7280',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#F9FAFB',
-  },
-  errorTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 10,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#6B7280',
-    textAlign: 'center',
   },
   section: {
     backgroundColor: '#fff',

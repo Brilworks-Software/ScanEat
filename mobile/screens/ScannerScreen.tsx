@@ -76,7 +76,7 @@ export default function ScannerScreen() {
       // console.log("Error:", error)
 
       try{
-        toast.showError("Product Scan Error", err.message || "An error occurred while scanning the product.");
+        toast.showError("Product Scan Error", "Product not found!");
       } catch(toastError){
         Alert.alert("Product Scan Error", err.message || "An error occurred while scanning the product.");
       }

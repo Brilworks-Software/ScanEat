@@ -15,7 +15,8 @@ import {
     FirebaseFirestoreTypes,
     deleteDoc
   } from '@react-native-firebase/firestore';
-  import { db } from '../firebase';
+  import { db, storage } from '../firebase';
+  import { ref, deleteObject } from '@react-native-firebase/storage';
   import { DetectedFood, FoodItem } from '../../types/product';
   
   /**
@@ -231,15 +232,40 @@ import {
     }
   
     /**
-     * Deletes a nutrition analysis
+     * Deletes a nutrition analysis and its associated image
      * @param analysisId - Analysis document ID
      * @returns Promise<void>
      */
     static async deleteAnalysis(analysisId: string): Promise<void> {
       try {
         console.log('Deleting nutrition analysis:', analysisId);
+        
+        // First, get the document to retrieve the imageFileName
         const docRef = doc(db, this.COLLECTION_NAME, analysisId);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) {
+          throw new Error('Nutrition analysis not found');
+        }
+        
+        const data = docSnap.data();
+        
+        // Delete associated image from Firebase Storage if it exists
+        if (data?.imageFileName) {
+          try {
+            const imagePath = `nutrition-analysis/${data.imageFileName}`;
+            const imageRef = ref(storage, imagePath);
+            await deleteObject(imageRef);
+            console.log('Deleted nutrition analysis image:', imagePath);
+          } catch (imageError: any) {
+            // Log but don't fail if image deletion fails (image might not exist)
+            console.warn('Failed to delete nutrition analysis image:', imageError);
+          }
+        }
+        
+        // Delete the Firestore document
         await deleteDoc(docRef);
+        console.log('Nutrition analysis deleted successfully');
       } catch (error: any) {
         console.error('Error deleting nutrition analysis:', error);
         throw new Error(`Failed to delete nutrition analysis: ${error.message}`);

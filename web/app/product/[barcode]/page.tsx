@@ -12,6 +12,7 @@ import RecommendationCard from '../../../components/RecommendationCard';
 import { getAdditiveInfo, getConcernColor, getConcernText } from '../../../lib/additives';
 import { getAllergenInfo, getAllergenSeverityColor } from '../../../lib/allergens';
 import { ProductService } from '@/lib/services/ProductService';
+import { ChevronLeft, ScanLine, Info, AlertTriangle, ChevronDown, CheckCircle, Clipboard } from 'lucide-react';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -154,9 +155,7 @@ export default function ProductDetailPage() {
           onClick={() => router.push('/')}
           className="mb-6 group flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
         >
-          <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ChevronLeft className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" />
           <span className="font-medium">Back to Scanner</span>
         </button>
 
@@ -193,9 +192,7 @@ export default function ProductDetailPage() {
                     </div>
                   )}
                   <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg inline-block">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                    </svg>
+                    <ScanLine className="w-4 h-4" />
                     <span>Barcode: {product.barcode}</span>
                   </div>
                 </div>
@@ -207,9 +204,7 @@ export default function ProductDetailPage() {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-6 gap-2">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">Health Analysis</h2>
                 <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <Info className="w-4 h-4" />
                   <span>Score out of 100</span>
                 </div>
               </div>
@@ -305,9 +300,7 @@ export default function ProductDetailPage() {
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-red-100">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="bg-red-100 rounded-full p-2">
-                    <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">Allergens</h3>
                 </div>
@@ -333,14 +326,9 @@ export default function ProductDetailPage() {
                               </div>
                             </div>
                             <button className="text-gray-500 hover:text-gray-700 transition-colors">
-                              <svg
+                              <ChevronDown
                                 className={`w-5 h-5 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                              </svg>
+                              />
                             </button>
                           </div>
 
@@ -421,9 +409,7 @@ export default function ProductDetailPage() {
               <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-yellow-100">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="bg-yellow-100 rounded-full p-2">
-                    <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <Info className="w-5 h-5 text-yellow-600" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">Additives</h3>
                   <span className="ml-auto text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
@@ -464,9 +450,7 @@ export default function ProductDetailPage() {
                               {additiveInfo.whyAvoid && additiveInfo.whyAvoid.length > 0 && (
                                 <div className="mb-3">
                                   <h4 className="text-sm font-bold text-red-700 mb-2 flex items-center gap-2">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                    </svg>
+                                    <AlertTriangle className="w-4 h-4" />
                                     Why Avoid This Additive
                                   </h4>
                                   <ul className="space-y-1">
@@ -484,9 +468,7 @@ export default function ProductDetailPage() {
                               {additiveInfo.healthEffects && additiveInfo.healthEffects.length > 0 && (
                                 <div className="mb-3">
                                   <h4 className="text-sm font-bold text-orange-700 mb-2 flex items-center gap-2">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                    </svg>
+                                    <AlertTriangle className="w-4 h-4" />
                                     Potential Health Effects
                                   </h4>
                                   <ul className="space-y-1">
@@ -504,9 +486,7 @@ export default function ProductDetailPage() {
                               {additiveInfo.benefits && additiveInfo.benefits.length > 0 && (
                                 <div className="mb-3">
                                   <h4 className="text-sm font-bold text-green-700 mb-2 flex items-center gap-2">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                    </svg>
+                                    <CheckCircle className="w-4 h-4" />
                                     Benefits
                                   </h4>
                                   <ul className="space-y-1">
@@ -524,9 +504,7 @@ export default function ProductDetailPage() {
                               {additiveInfo.alternatives && (
                                 <div className="mt-3 pt-3 border-t border-gray-200">
                                   <h4 className="text-sm font-bold text-blue-700 mb-2 flex items-center gap-2">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                    </svg>
+                                    <Clipboard className="w-4 h-4" />
                                     Better Alternatives
                                   </h4>
                                   <p className="text-sm text-gray-700">{formatNumbersInText(additiveInfo.alternatives)}</p>

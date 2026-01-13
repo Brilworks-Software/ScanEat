@@ -5,6 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { NutritionAnalysisService, NutritionAnalysis } from '@/lib/services/NutritionAnalysisService';
 import {  DetectedFood, FoodItem } from '@/types/product';
 import Image from 'next/image';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { ChevronLeft, Trash2, AlertTriangle, Frown, Loader2 } from 'lucide-react';
 
 export default function NutritionAnalysisDetailPage() {
   const params = useParams();
@@ -12,8 +15,17 @@ export default function NutritionAnalysisDetailPage() {
   const [analysis, setAnalysis] = useState<NutritionAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const id = params.id as string;
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUserId(user?.uid || null);
+    });
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -38,6 +50,33 @@ export default function NutritionAnalysisDetailPage() {
       setError('Failed to load nutrition analysis. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!analysis || !currentUserId) return;
+
+    // Check if user owns this analysis
+    if (analysis.userId !== currentUserId) {
+      alert('You do not have permission to delete this analysis.');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this nutrition analysis? This action cannot be undone.'
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeleting(true);
+      await NutritionAnalysisService.deleteAnalysis(id);
+      router.push('/nutrition-analysis');
+    } catch (err: any) {
+      console.error('Error deleting analysis:', err);
+      alert('Failed to delete analysis. Please try again.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -118,9 +157,7 @@ export default function NutritionAnalysisDetailPage() {
       <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-lg text-center">
           <div className="text-red-500 mb-4">
-            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
+            <AlertTriangle className="w-16 h-16 mx-auto" />
           </div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Analysis Not Found</h2>
           <p className="text-gray-600 mb-6">{error || 'The requested nutrition analysis could not be found.'}</p>
@@ -156,13 +193,33 @@ export default function NutritionAnalysisDetailPage() {
               onClick={() => router.back()}
               className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
+              <ChevronLeft className="w-5 h-5" />
               Back
             </button>
             <h1 className="text-xl font-bold text-gray-800">Nutrition Analysis</h1>
-            <div className="w-16"></div>
+            {analysis && currentUserId && analysis.userId === currentUserId && (
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Delete this analysis"
+              >
+                {deleting ? (
+                  <>
+                    <Loader2 className="animate-spin h-5 w-5" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-5 h-5 text-red-600" />
+                    <span className="hidden sm:inline">Delete</span>
+                  </>
+                )}
+              </button>
+            )}
+            {(!analysis || !currentUserId || analysis.userId !== currentUserId) && (
+              <div className="w-16"></div>
+            )}
           </div>
         </div>
       </div>
@@ -190,9 +247,7 @@ export default function NutritionAnalysisDetailPage() {
               <div className="max-w-md mx-auto bg-white/90 backdrop-blur-md rounded-2xl p-12 shadow-xl border border-gray-100 text-center">
                 <div className="mb-6">
                   <div className="w-32 h-32 mx-auto bg-linear-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
-                    <svg className="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <Frown className="w-20 h-20 text-gray-400" />
                   </div>
                 </div>
                 <h2 className="text-3xl font-bold text-gray-800 mb-4">No Food Detected</h2>

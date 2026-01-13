@@ -8,6 +8,7 @@ import { ImageUploadService } from '@/lib/services/ImageUploadService';
 import { DetectedFood, FoodItem } from '@/types/product';
 import { auth } from '@/lib/firebase';
 import Image from 'next/image';
+import { Upload, Camera, Search, AlertTriangle, Trash2, Image as ImageIcon, Eye, BarChart3, Loader2 } from 'lucide-react';
 
 export default function NutritionAnalysisPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function NutritionAnalysisPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previousAnalyses, setPreviousAnalyses] = useState<NutritionAnalysis[]>([]);
   const [loadingPrevious, setLoadingPrevious] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [uploadMode, setUploadMode] = useState<'file' | 'camera'>('file');
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -134,6 +136,40 @@ export default function NutritionAnalysisPage() {
     router.push(`/nutrition-analysis/${analysisId}`);
   };
 
+  const handleDeleteAnalysis = async (e: React.MouseEvent, analysis: NutritionAnalysis) => {
+    e.stopPropagation(); // Prevent card click from firing
+
+    const user = auth.currentUser;
+    if (!user) {
+      alert('You must be logged in to delete analyses.');
+      return;
+    }
+
+    // Check if user owns this analysis
+    if (analysis.userId !== user.uid) {
+      alert('You do not have permission to delete this analysis.');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this nutrition analysis? This action cannot be undone.'
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeletingId(analysis.id);
+      await NutritionAnalysisService.deleteAnalysis(analysis.id);
+      // Refresh the list after deletion
+      await fetchPreviousAnalyses();
+    } catch (err: any) {
+      console.error('Error deleting analysis:', err);
+      alert('Failed to delete analysis. Please try again.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const startCamera = async () => {
     try {
       setCameraError(null);
@@ -226,9 +262,7 @@ export default function NutritionAnalysisPage() {
                         : 'text-gray-600 hover:text-gray-800'
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
+                    <Upload className="w-4 h-4" />
                     Upload File
                   </button>
                   <button
@@ -239,10 +273,7 @@ export default function NutritionAnalysisPage() {
                         : 'text-gray-600 hover:text-gray-800'
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                    <Camera className="w-4 h-4" />
                     Take Photo
                   </button>
                 </div>
@@ -284,9 +315,7 @@ export default function NutritionAnalysisPage() {
                   {cameraError ? (
                     <div className="text-center py-8">
                       <div className="text-red-500 mb-4">
-                        <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                        </svg>
+                        <AlertTriangle className="w-12 h-12 mx-auto" />
                       </div>
                       <h3 className="text-lg font-semibold text-gray-800 mb-2">Camera Error</h3>
                       <p className="text-gray-600 mb-4">{cameraError}</p>
@@ -309,9 +338,7 @@ export default function NutritionAnalysisPage() {
                         />
                         <div className="absolute inset-0 border-2 border-white border-dashed rounded-xl flex items-center justify-center">
                           <div className="text-white text-center">
-                            <svg className="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                            <Search className="w-8 h-8 mx-auto mb-2" />
                             <p className="text-sm font-medium">Position your food in the frame</p>
                           </div>
                         </div>
@@ -375,8 +402,22 @@ export default function NutritionAnalysisPage() {
                     <div
                       key={analysis.id}
                       onClick={() => handleViewAnalysis(analysis.id)}
-                      className="bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden"
+                      className="bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden relative"
                     >
+                      {/* Delete Button */}
+                      <button
+                        onClick={(e) => handleDeleteAnalysis(e, analysis)}
+                        disabled={deletingId === analysis.id}
+                        className="absolute top-2 right-2 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Delete this analysis"
+                      >
+                        {deletingId === analysis.id ? (
+                          <Loader2 className="animate-spin h-4 w-4 text-red-600" />
+                        ) : (
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        )}
+                      </button>
+
                       {/* Image */}
                       {analysis.imageUrl ? (
                         <div className="relative h-48 bg-gray-100">
@@ -389,9 +430,7 @@ export default function NutritionAnalysisPage() {
                         </div>
                       ) : (
                         <div className="h-48 bg-linear-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                          <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
+                          <ImageIcon className="w-12 h-12 text-gray-400" />
                         </div>
                       )}
 
@@ -429,10 +468,7 @@ export default function NutritionAnalysisPage() {
 
                         <div className="mt-3 pt-3 border-t border-gray-100">
                           <div className="flex items-center justify-center text-xs text-blue-600 font-medium">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
+                            <Eye className="w-4 h-4 mr-1" />
                             View Details
                           </div>
                         </div>
@@ -444,9 +480,7 @@ export default function NutritionAnalysisPage() {
 
               {previousAnalyses.length === 0 && !loadingPrevious && (
                 <div className="text-center py-8">
-                  <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+                  <BarChart3 className="w-16 h-16 mx-auto text-gray-300 mb-4" />
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">No Previous Analyses</h3>
                   <p className="text-gray-600">Your nutrition analysis history will appear here.</p>
                 </div>

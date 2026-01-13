@@ -10,6 +10,7 @@ import { HistoryService } from "@/lib/services/HistoryService";
 import { ProductService } from "@/lib/services/ProductService";
 import { auth } from "@/lib/firebase";
 import { processImageWithGemini, sendImageToAI } from "@/utils/gemini";
+import { XCircle, BarChart3, Upload } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -170,9 +171,7 @@ export default function Home() {
           <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8 shadow-lg border border-green-100">
             <div className="text-center">
               <div className="bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
+                <BarChart3 className="w-8 h-8" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
                 Advanced Nutrition Analysis
@@ -185,9 +184,7 @@ export default function Home() {
                 onClick={() => router.push('/nutrition-analysis')}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-green-500 to-blue-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 font-semibold"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
+                <Upload className="w-5 h-5" />
                 Try Nutrition Analysis
               </button>
             </div>
@@ -240,17 +237,7 @@ export default function Home() {
           <div className="max-w-2xl mx-auto mb-8 animate-slide-down">
             <div className="bg-red-50 border-l-4 border-red-500 text-red-800 p-5 rounded-xl shadow-lg">
               <div className="flex items-start">
-                <svg
-                  className="w-6 h-6 mr-3 mt-0.5 flex-shrink-0"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <XCircle className="w-6 h-6 mr-3 mt-0.5 flex-shrink-0" />
                 <p className="font-semibold text-base">{error}</p>
               </div>
             </div>

@@ -13,7 +13,10 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { DetectedFood, FoodItem } from '../types/product';
 import { processImageWithGemini } from '../utils/gemini';
 import { NutritionAnalysisService } from '../lib/services/NutritionAnalysisService';
-import { ArrowLeft, Camera, RefreshCw } from 'lucide-react-native';
+import { ArrowLeft, Camera, RefreshCw, Smile, Trash2 } from 'lucide-react-native';
+import FoodNotFound from '../components/FoodNotFound';
+import { auth } from '../lib/firebase';
+import { onAuthStateChanged } from '@react-native-firebase/auth';
 
 export default function NutritionAnalysisDetailScreen() {
   const route = useRoute();
@@ -24,6 +27,17 @@ export default function NutritionAnalysisDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [savedAnalysisId, setSavedAnalysisId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [analysisUserId, setAnalysisUserId] = useState<string | null>(null);
+  const [analysisImageUrl, setAnalysisImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUserId(user?.uid || null);
+    });
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     if (analysisId) {
@@ -53,12 +67,51 @@ export default function NutritionAnalysisDetailScreen() {
       }
       setDetectedFood(analysis.detectedFood);
       setSavedAnalysisId(analysisId);
+      setAnalysisUserId(analysis.userId);
+      setAnalysisImageUrl(analysis.imageUrl || null);
     } catch (err: any) {
       console.error('Error fetching analysis:', err);
       setError('Failed to load analysis. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = () => {
+    if (!savedAnalysisId || !currentUserId || !analysisUserId) return;
+
+    // Check if user owns this analysis
+    if (analysisUserId !== currentUserId) {
+      Alert.alert('Error', 'You do not have permission to delete this analysis.');
+      return;
+    }
+
+    Alert.alert(
+      'Delete Analysis',
+      'Are you sure you want to delete this nutrition analysis? This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setDeleting(true);
+              await NutritionAnalysisService.deleteAnalysis(savedAnalysisId);
+              navigation.goBack();
+            } catch (err: any) {
+              console.error('Error deleting analysis:', err);
+              Alert.alert('Error', 'Failed to delete analysis. Please try again.');
+            } finally {
+              setDeleting(false);
+            }
+          },
+        },
+      ]
+    );
   };
 
   const analyzeImage = async () => {
@@ -118,14 +171,14 @@ export default function NutritionAnalysisDetailScreen() {
   const FoodItemCard = ({ item }: { item: FoodItem }) => (
     <View style={styles.foodItemCard}>
       <View style={styles.foodItemHeader}>
-        <View>
-          <Text style={styles.foodItemName}>{item.food}</Text>
+        <View style={styles.foodItemInfo}>
+          <Text style={styles.foodItemName} numberOfLines={2}>{item.food}</Text>
           <Text style={styles.foodItemQuantity}>
             {formatValue(item.quantity_grams || 0, 'g')}
           </Text>
         </View>
         <View style={styles.caloriesBadge}>
-          <Text style={styles.caloriesText}>
+          <Text style={styles.caloriesText} numberOfLines={1}>
             {formatValue(item.calories || 0, ' cal')}
           </Text>
         </View>
@@ -186,53 +239,85 @@ export default function NutritionAnalysisDetailScreen() {
 
   if (error || !detectedFood) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorTitle}>Analysis Failed</Text>
-        <Text style={styles.errorText}>
-          {error || 'Unable to analyze the food in your image.'}
-        </Text>
+      <FoodNotFound 
+        error={error || 'Unable to analyze the food in your image.'}
+        onBackPress={() => navigation.navigate('Camera' as never)}
+      />
+    );
+  }
 
-        <View style={styles.errorActions}>
-          {imageUri && (
+  const hasNoFoodItems = !detectedFood.items || detectedFood.items.length === 0;
+
+  if (hasNoFoodItems) {
+    return (
+      <View style={styles.noFoodContainer}>
+        <View style={styles.noFoodContent}>
+          <View style={styles.noFoodIconContainer}>
+            <View style={styles.noFoodIconCircle}>
+              <Smile size={80} color="#9CA3AF" strokeWidth={1.5} />
+            </View>
+          </View>
+          <Text style={styles.noFoodTitle}>No Food Detected</Text>
+          <Text style={styles.noFoodMessage}>
+            We couldn't detect any food items in this image.
+          </Text>
+          <Text style={styles.noFoodSubtext}>
+            Please try uploading a clearer image with visible food items.
+          </Text>
+          <View style={styles.noFoodButtons}>
             <TouchableOpacity
-              style={styles.retryButton}
-              onPress={analyzeImage}
+              style={styles.noFoodPrimaryButton}
+              onPress={() => navigation.navigate('Camera' as never)}
+              activeOpacity={0.8}
             >
-              <RefreshCw size={20} color="#6366F1" />
-              <Text style={styles.retryButtonText}>Try Again</Text>
+              <Text style={styles.noFoodPrimaryButtonText}>Start New Analysis</Text>
             </TouchableOpacity>
-          )}
-
-          <TouchableOpacity
-            style={styles.newPhotoButton}
-            onPress={() => navigation.navigate('Camera' as never)}
-          >
-            <Camera size={20} color="#fff" />
-            <Text style={styles.newPhotoButtonText}>Take New Photo</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.noFoodSecondaryButton}
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.noFoodSecondaryButtonText}>Go Back</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
   }
 
+  const canDelete = savedAnalysisId && currentUserId && analysisUserId === currentUserId;
+
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
-      {/* <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <ArrowLeft size={24} color="#6366F1" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Food Analysis</Text>
-        <View style={{ width: 40 }} />
-      </View> */}
+      {/* Header with Delete Button */}
+      {canDelete && (
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Food Analysis</Text>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={handleDelete}
+            disabled={deleting}
+          >
+            {deleting ? (
+              <ActivityIndicator size="small" color="#DC2626" />
+            ) : (
+              <Trash2 size={24} color="#DC2626" />
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Image Preview */}
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: imageUri }} style={styles.image} />
-      </View>
+      {(imageUri || analysisImageUrl) && (
+        <View style={styles.imageContainer}>
+          <Image 
+            source={{ uri: imageUri || analysisImageUrl || '' }} 
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+      )}
 
       {/* Total Nutrition Summary */}
       <View style={styles.summaryContainer}>
@@ -312,7 +397,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 20,
-    paddingTop: 60,
+    // paddingTop: 60,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
@@ -324,6 +409,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#111827',
+    flex: 1,
+    textAlign: 'center',
+  },
+  deleteButton: {
+    padding: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 40,
   },
   imageContainer: {
     padding: 20,
@@ -423,11 +516,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 16,
   },
+  foodItemInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
   foodItemName: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#111827',
-    flex: 1,
   },
   foodItemQuantity: {
     fontSize: 14,
@@ -439,6 +535,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
+    flexShrink: 1,
+    maxWidth: '40%',
   },
   caloriesText: {
     fontSize: 14,
@@ -484,55 +582,95 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     textAlign: 'center',
   },
-  errorContainer: {
+  noFoodContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F9FAFB',
-    padding: 40,
+    padding: 20,
+    minHeight: '60%',
   },
-  errorTitle: {
-    fontSize: 24,
+  noFoodContent: {
+    maxWidth: 400,
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 24,
+    padding: 48,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  noFoodIconContainer: {
+    marginBottom: 24,
+  },
+  noFoodIconCircle: {
+    width: 128,
+    height: 128,
+    borderRadius: 64,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  noFoodTitle: {
+    fontSize: 30,
     fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 12,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#6B7280',
+    color: '#1F2937',
+    marginBottom: 16,
     textAlign: 'center',
-    marginBottom: 32,
   },
-  errorActions: {
+  noFoodMessage: {
+    fontSize: 18,
+    color: '#4B5563',
+    marginBottom: 8,
+    textAlign: 'center',
+    lineHeight: 26,
+  },
+  noFoodSubtext: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 32,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  noFoodButtons: {
     width: '100%',
     gap: 12,
   },
-  retryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#EEF2FF',
-    padding: 16,
-    borderRadius: 12,
-    gap: 8,
+  noFoodPrimaryButton: {
+    width: '100%',
+    backgroundColor: '#2563EB',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  retryButtonText: {
+  noFoodPrimaryButtonText: {
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
-    color: '#6366F1',
+    textAlign: 'center',
   },
-  newPhotoButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#6366F1',
-    padding: 16,
-    borderRadius: 12,
-    gap: 8,
+  noFoodSecondaryButton: {
+    width: '100%',
+    backgroundColor: '#E5E7EB',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
   },
-  newPhotoButtonText: {
+  noFoodSecondaryButtonText: {
+    color: '#374151',
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    textAlign: 'center',
   },
 });

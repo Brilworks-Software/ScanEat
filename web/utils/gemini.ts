@@ -482,31 +482,23 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemi
 export async function processImageWithGemini(file: File): Promise<string> {
   const imageBase64 = await fileToBase64Only(file);
 
-  const prompt = `You are an expert food nutritionist AI with strong visual recognition skills. Analyze this image and identify every distinct food item visible, regardless of cuisine, using visual cues such as color, texture, shape, layering, and garnish.  Provide a detailed nutritional breakdown for each identified food item, including estimated weight in grams and approximate calorie content.
-      
-      Pay close attention to **texture, color, layering, and garnish** to differentiate items.
-      
-      For each food item, return the following fields:
-      - "food": Name of the dish (e.g., "Garlic Paratha", "Paneer Butter Masala")
-      - "quantity": Approximate count/serving size (e.g., "2 pieces", "1 bowl")
-      - "quantity_grams": Estimated weight in grams
-      - "calories": Approximate calorie content
-      - "fat_grams"
-      - "carbs_grams"
-      - "protein_grams"
-      - "fiber_grams"
-      - "sugar_grams"
-      - "sodium_mg"
-      - "vitamin_a"
-      - "vitamin_c"
-      - "calcium_mg"
-      - "iron_mg"
-      
-      Return:
-      1. A JSON array with each food item as described above
-      2. A second JSON object that summarizes **total nutrition values**
+  const prompt = `You are an expert food nutritionist AI with strong visual recognition skills. Analyze this image and identify every distinct food item visible, regardless of cuisine, using visual cues such as color, texture, shape, layering, and garnish. Provide a detailed nutritional breakdown for each identified food item, including estimated weight in grams and approximate calorie content.
 
-      [
+Pay close attention to **texture, color, layering, and garnish** to differentiate items. If items are similar, still try to name them differently (e.g., "Laccha Paratha" vs "Garlic Paratha"). Use common Indian dish knowledge and visual clues to make your best guess.
+
+⚠️ **EDGE CASE LOGIC:** If no food items are detected in the image:
+1. Return an empty array \`[]\` for the food items.
+2. Return the \`total_nutrition_summary\` object with all numerical values set to \`0\`.
+
+For each food item, return the following fields:
+- "food": Name of the dish
+- "quantity": Approximate count/serving size (e.g., "2 pieces", "1 bowl")
+- "quantity_grams": Estimated weight in grams
+- "calories", "fat_grams", "carbs_grams", "protein_grams", "fiber_grams", "sugar_grams", "sodium_mg", "vitamin_a", "vitamin_c", "calcium_mg", "iron_mg"
+
+Return the data in the following format:
+
+[
   {
     "food": string,
     "quantity": string,
@@ -539,8 +531,7 @@ export async function processImageWithGemini(file: File): Promise<string> {
     "total_iron_mg": number
   }
 }
-      
-      ⚠️ If items are similar, still try to name them differently (e.g., "Laccha Paratha" vs "Garlic Paratha"). Use common Indian dish knowledge and visual clues to make your best guess.
+
       `;
       const image = {
         inlineData: {

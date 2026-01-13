@@ -17,6 +17,7 @@ import ScannerScreen from "./screens/ScannerScreen";
 import ProductDetailScreen from "./screens/ProductDetailScreen";
 import HistoryScreen from "./screens/HistoryScreen";
 import AuthScreen from "./screens/AuthScreen";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import CameraScreen from "./screens/CameraScreen";
 import NutritionAnalysisDetailScreen from "./screens/NutritionAnalysisDetailScreen";
 import NutritionAnalysisHistoryScreen from "./screens/NutritionAnalysisHistoryScreen";
@@ -202,13 +203,30 @@ function RootLayout() {
             />
           </>
         ) : (
-          <Stack.Screen
-            name="Auth"
-            component={AuthScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
+          <>
+            <Stack.Screen
+              name="Auth"
+              component={AuthScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPasswordScreen}
+              options={{
+                headerShown: true,
+                title: "Forgot Password",
+                headerStyle: {
+                  backgroundColor: "#6366F1",
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold",
+                },
+              }}
+            />
+          </>
         )}
       </Stack.Navigator>
   );
