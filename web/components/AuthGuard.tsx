@@ -15,13 +15,18 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       setIsChecking(false);
       
       // Public routes that don't require authentication
-      const publicRoutes = ['/login', '/signup', '/forgot-password'];
+      const publicRoutes = ['/login', '/signup', '/forgot-password', '/privacy-policy'];
       const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+      
+      // Auth-related routes that should redirect logged-in users to home
+      const authRoutes = ['/login', '/signup', '/forgot-password'];
+      const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
 
       if (user) {
         // User is logged in
-        // If on login/signup page, redirect to home
-        if (isPublicRoute) {
+        // If on auth-related pages (login/signup), redirect to home
+        // But allow access to other public routes like privacy-policy
+        if (isAuthRoute) {
           router.push('/');
         }
       } else {
