@@ -11,7 +11,8 @@ import {
   orderBy,
   limit,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  deleteDoc
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { DetectedFood, FoodItem } from '@/types/product';
@@ -227,11 +228,9 @@ export class NutritionAnalysisService {
    */
   static async deleteAnalysis(analysisId: string): Promise<void> {
     try {
+      console.log('Deleting nutrition analysis:', analysisId);
       const docRef = doc(db, this.COLLECTION_NAME, analysisId);
-      await updateDoc(docRef, {
-        deleted: true,
-        updatedAt: serverTimestamp(),
-      });
+      await deleteDoc(docRef);
     } catch (error: any) {
       console.error('Error deleting nutrition analysis:', error);
       throw new Error(`Failed to delete nutrition analysis: ${error.message}`);
