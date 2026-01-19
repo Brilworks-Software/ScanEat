@@ -137,9 +137,11 @@ export default function HeaderMenu({ onLogout }: HeaderMenuProps) {
       <TouchableOpacity
         onPress={() => setMenuVisible(true)}
         style={styles.menuButton}
-        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        activeOpacity={0.6}
       >
-        <MoreVertical size={24} color="#fff" />
+        <View pointerEvents="none" style={{backgroundColor: 'transparent'}}>
+          <MoreVertical size={24} color="#fff" />
+        </View>
       </TouchableOpacity>
 
       <Modal
@@ -148,49 +150,57 @@ export default function HeaderMenu({ onLogout }: HeaderMenuProps) {
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
       >
-        <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
+        <TouchableWithoutFeedback onPress={() => {
+          setMenuVisible(false)
+        }}>
           <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.menuContainer}>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={handleHistoryPress}
-                >
+            <View style={styles.menuContainer}>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={handleHistoryPress}
+              >
+                <View pointerEvents="none">
                   <History size={20} color="#111827" />
-                  <Text style={styles.menuItemText}>History</Text>
-                </TouchableOpacity>
+                </View>
+                <Text style={styles.menuItemText}>History</Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={handleNutritionAnalysisPress}
-                >
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={handleNutritionAnalysisPress}
+              >
+                <View pointerEvents="none">
                   <UtensilsCrossed size={20} color="#111827" />
-                  <Text style={styles.menuItemText}>Nutrition Analyses</Text>
-                </TouchableOpacity>
+                </View>
+                <Text style={styles.menuItemText}>Nutrition Analyses</Text>
+              </TouchableOpacity>
 
-                <View style={styles.separator} />
+              <View style={styles.separator} />
 
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={handleLogoutPress}
-                >
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={handleLogoutPress}
+              >
+                <View pointerEvents="none">
                   <LogOut size={20} color="#DC2626" />
-                  <Text style={[styles.menuItemText, styles.logoutText]}>
-                    Logout
-                  </Text>
-                </TouchableOpacity>
+                </View>
+                <Text style={[styles.menuItemText, styles.logoutText]}>
+                  Logout
+                </Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={handleDeleteAccountPress}
-                >
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={handleDeleteAccountPress}
+              >
+                <View pointerEvents="none">
                   <Trash2 size={20} color="#DC2626" />
-                  <Text style={[styles.menuItemText, styles.deleteText]}>
-                    Delete Account
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableWithoutFeedback>
+                </View>
+                <Text style={[styles.menuItemText, styles.deleteText]}>
+                  Delete Account
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -218,49 +228,47 @@ export default function HeaderMenu({ onLogout }: HeaderMenuProps) {
             }
           }}>
             <View style={styles.deleteModalOverlayInner}>
-              <TouchableWithoutFeedback>
-                <View style={styles.deleteModalContainer}>
-                  <Text style={styles.deleteModalTitle}>Delete Account</Text>
-                  <Text style={styles.deleteModalDescription}>
-                    To confirm account deletion, please enter your password. This action cannot be undone and will permanently delete all your data.
-                  </Text>
-                  
-                  <TextInput
-                    style={styles.passwordInput}
-                    placeholder="Enter your password"
-                    placeholderTextColor="#999"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                    editable={!isDeleting}
-                    autoCapitalize="none"
-                  />
+              <View style={styles.deleteModalContainer}>
+                <Text style={styles.deleteModalTitle}>Delete Account</Text>
+                <Text style={styles.deleteModalDescription}>
+                  To confirm account deletion, please enter your password. This action cannot be undone and will permanently delete all your data.
+                </Text>
+                
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder="Enter your password"
+                  placeholderTextColor="#999"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  editable={!isDeleting}
+                  autoCapitalize="none"
+                />
 
-                  <View style={styles.deleteModalButtons}>
-                    <TouchableOpacity
-                      style={[styles.deleteModalButton, styles.cancelButton]}
-                      onPress={() => {
-                        setDeleteModalVisible(false);
-                        setPassword('');
-                      }}
-                      disabled={isDeleting}
-                    >
-                      <Text style={styles.cancelButtonText}>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.deleteModalButton, styles.deleteButton]}
-                      onPress={handleDeleteAccount}
-                      disabled={isDeleting || !password}
-                    >
-                      {isDeleting ? (
-                        <ActivityIndicator size="small" color="#fff" />
-                      ) : (
-                        <Text style={styles.deleteButtonText}>Delete</Text>
-                      )}
-                    </TouchableOpacity>
-                  </View>
+                <View style={styles.deleteModalButtons}>
+                  <TouchableOpacity
+                    style={[styles.deleteModalButton, styles.cancelButton]}
+                    onPress={() => {
+                      setDeleteModalVisible(false);
+                      setPassword('');
+                    }}
+                    disabled={isDeleting}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.deleteModalButton, styles.deleteButton]}
+                    onPress={handleDeleteAccount}
+                    disabled={isDeleting || !password}
+                  >
+                    {isDeleting ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text style={styles.deleteButtonText}>Delete</Text>
+                    )}
+                  </TouchableOpacity>
                 </View>
-              </TouchableWithoutFeedback>
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -271,8 +279,9 @@ export default function HeaderMenu({ onLogout }: HeaderMenuProps) {
 
 const styles = StyleSheet.create({
   menuButton: {
-    marginRight: 16,
-    padding: 4,
+    // marginRight: 16,
+    padding: 8,
+    backgroundColor: 'transparent',
   },
   modalOverlay: {
     flex: 1,

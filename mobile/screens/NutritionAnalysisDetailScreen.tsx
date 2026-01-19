@@ -246,7 +246,9 @@ export default function NutritionAnalysisDetailScreen() {
     );
   }
 
-  const hasNoFoodItems = !detectedFood.items || detectedFood.items.length === 0;
+  const hasNoFoodItems = !detectedFood.items || detectedFood.items.length === 0 ||
+    (detectedFood.items.length === 1 && detectedFood.items[0].food.toLowerCase() === 'unknown') ||
+    (detectedFood.items.length === 1 && detectedFood.items[0].food.toLowerCase().startsWith ('no food'));
 
   if (hasNoFoodItems) {
     return (

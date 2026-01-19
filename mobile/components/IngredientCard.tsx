@@ -76,7 +76,7 @@ export default function IngredientCard({ ingredient, isExpanded, onToggle }: Ing
           {/* Ingredient Name and Tags */}
           <View style={styles.ingredientMainContent}>
             <View style={styles.ingredientNameRow}>
-              <View style={{flexDirection:"row", gap: 10}}>
+              <View style={styles.nameBadgeRow}>
 
               <Text style={styles.ingredientName}>{ingredient.name}</Text>
               {info && (
@@ -86,10 +86,7 @@ export default function IngredientCard({ ingredient, isExpanded, onToggle }: Ing
               )}
               </View>
               <View style={[styles.expandIcon, isExpanded && styles.expandIconRotated]}>
-                <ChevronDown
-                  size={16}
-                  color="#6B7280"
-                />
+                <ChevronDown size={16} color="#6B7280" />
               </View>
             </View>
 
@@ -269,21 +266,32 @@ const styles = StyleSheet.create({
   ingredientNameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     gap: 8,
     marginBottom: 8,
     justifyContent: "space-between"
+  },
+  nameBadgeRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    minWidth: 0,
   },
   ingredientName: {
     fontSize: 16,
     fontWeight: '600',
     color: '#111827',
+    flex: 1,
     flexShrink: 1,
+    minWidth: 0,
   },
   concernBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    maxWidth: 140,
+    overflow: 'hidden',
   },
   concernBadgeText: {
     fontSize: 10,
@@ -327,6 +335,7 @@ const styles = StyleSheet.create({
   expandIcon: {
     marginLeft: 8,
     flexShrink: 0,
+    alignSelf: 'flex-start',
   },
   expandIconRotated: {
     transform: [{ rotate: '180deg' }],

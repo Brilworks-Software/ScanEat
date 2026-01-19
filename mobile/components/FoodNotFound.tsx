@@ -35,7 +35,9 @@ export default function FoodNotFound({ error, onBackPress }: FoodNotFoundProps) 
           onPress={handleBackPress}
           activeOpacity={0.8}
         >
-          <ArrowLeft size={20} color="#FFFFFF" />
+          <View pointerEvents="none">
+            <ArrowLeft size={20} color="#FFFFFF" />
+          </View>
           <Text style={styles.buttonText}>Back to Scanner</Text>
         </TouchableOpacity>
       </View>

@@ -86,6 +86,7 @@ export default function CameraScreen() {
       Alert.alert('Error', error.message || 'Failed to analyze the photo. Please try again.');
     } finally {
       setLoading(false);
+      setPhoto(null);
     }
   };
 
@@ -132,7 +133,9 @@ export default function CameraScreen() {
             onPress={handleRetakePhoto}
             disabled={loading}
           >
-            <RotateCcw size={24} color="#6B7280" />
+            <View pointerEvents="none">
+              <RotateCcw size={24} color="#6B7280" />
+            </View>
             <Text style={styles.retakeButtonText}>Retake</Text>
           </TouchableOpacity>
 
@@ -165,7 +168,9 @@ export default function CameraScreen() {
               style={styles.closeButton}
               onPress={() => navigation.goBack()}
             >
-              <X size={24} color="#fff" />
+              <View pointerEvents="none">
+                <X size={24} color="#fff" />
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -181,7 +186,9 @@ export default function CameraScreen() {
               style={styles.flipButton}
               onPress={toggleCameraFacing}
             >
-              <RotateCcw size={24} color="#fff" />
+              <View pointerEvents="none">
+                <RotateCcw size={24} color="#fff" />
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity

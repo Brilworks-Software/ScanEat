@@ -18,7 +18,7 @@
       "bundleIdentifier": "com.brilworks.scaneat",
       "buildNumber": "1.0.0",
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on food products.",
+        "NSCameraUsageDescription": "This app uses the camera to scan food product barcodes or take photos of food items to provide detailed nutritional information.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "googleServicesFile": "./GoogleService-Info.plist"
@@ -54,6 +54,25 @@
     },
     "updates": {
       "url": "https://u.expo.dev/16826cab-56d6-4c55-9440-f6e201747ecd"
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "buildReactNativeFromSource": true
+          }
+        }
+      ],
+      "@react-native-firebase/app",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "This app uses the camera to scan barcodes on food products."
+        }
+      ],
+      "@react-native-firebase/auth"
+    ]
   }
 }

@@ -168,7 +168,9 @@ export default function ScannerScreen() {
                 style={styles.modeToggleGradient}
               />
             )}
-            <Barcode size={20} color={scanMode === 'barcode' ? '#fff' : '#6B7280'} />
+            <View pointerEvents="none">
+              <Barcode size={20} color={scanMode === 'barcode' ? '#fff' : '#6B7280'} />
+            </View>
             <Text style={[
               styles.modeToggleText,
               scanMode === 'barcode' && styles.modeToggleTextActive
@@ -193,7 +195,9 @@ export default function ScannerScreen() {
                 style={styles.modeToggleGradient}
               />
             )}
-            <Camera size={20} color={scanMode === 'camera' ? '#fff' : '#6B7280'} />
+            <View pointerEvents="none">
+              <Camera size={20} color={scanMode === 'camera' ? '#fff' : '#6B7280'} />
+            </View>
             <Text style={[
               styles.modeToggleText,
               scanMode === 'camera' && styles.modeToggleTextActive
@@ -248,7 +252,9 @@ export default function ScannerScreen() {
                   end={{ x: 1, y: 0 }}
                   style={styles.takePhotoButtonGradient}
                 >
-                  <Camera size={24} color="#fff" />
+                  <View pointerEvents="none">
+                    <Camera size={24} color="#fff" />
+                  </View>
                   <Text style={styles.takePhotoButtonText}>Take Photo</Text>
                 </LinearGradient>
               </TouchableOpacity>

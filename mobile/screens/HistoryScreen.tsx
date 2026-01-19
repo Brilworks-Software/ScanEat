@@ -195,7 +195,9 @@ export default function HistoryScreen() {
           {refreshing ? (
             <ActivityIndicator size="small" color="#6366F1" />
           ) : (
-            <RefreshCw size={20} color="#6366F1" />
+            <View pointerEvents="none">
+              <RefreshCw size={20} color="#6366F1" />
+            </View>
           )}
           <Text style={styles.refreshHeaderText}>
             {refreshing ? 'Refreshing...' : 'Refresh'}
@@ -263,7 +265,9 @@ export default function HistoryScreen() {
               onPress={() => handleDeleteItem(item)}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Trash2 size={20} color="#EF4444" />
+              <View pointerEvents="none">
+                <Trash2 size={20} color="#EF4444" />
+              </View>
             </TouchableOpacity>
           </TouchableOpacity>
         )}
