@@ -50,7 +50,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             <img 
               src="/favicon.png" 
               alt="Loading" 
-              className="w-16 h-16 animate-spin"
+              className="w-16 h-16 animate-spin rounded-full"
             />
           </div>
           <p className="text-gray-600">Loading...</p>

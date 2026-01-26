@@ -120,7 +120,7 @@ export default function ProductDetailPage() {
             <img 
               src="/favicon.png" 
               alt="Loading" 
-              className="w-16 h-16 mx-auto mb-4 animate-spin"
+              className="w-16 h-16 mx-auto mb-4 animate-spin rounded-full"
             />
           </div>
           <p className="text-lg font-medium text-gray-700 mb-2">Analyzing Product</p>

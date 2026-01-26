@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-4">
-            <img src="/favicon.png" alt="Logo" className="w-24 h-24 mx-auto" />
+            <img src="/favicon.png" alt="Logo" className="w-24 h-24 mx-auto rounded-full" />
           </Link>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             Reset Password
@@ -143,7 +143,7 @@ export default function ForgotPasswordPage() {
                     <img 
                       src="/favicon.png" 
                       alt="Loading" 
-                      className="animate-spin -ml-1 mr-3 h-5 w-5"
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 rounded-full"
                     />
                     Sending...
                   </>

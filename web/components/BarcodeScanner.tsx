@@ -343,7 +343,7 @@ export default function BarcodeScanner({ onScan, onError }: BarcodeScannerProps)
                 <img 
                   src="/favicon.png" 
                   alt="Loading" 
-                  className="animate-spin h-4 w-4"
+                  className="animate-spin h-4 w-4 rounded-full"
                 />
                 Requesting camera access...
               </p>
@@ -371,7 +371,7 @@ export default function BarcodeScanner({ onScan, onError }: BarcodeScannerProps)
                     <img 
                       src="/favicon.png" 
                       alt="Loading" 
-                      className="animate-spin h-5 w-5"
+                      className="animate-spin h-5 w-5 rounded-full"
                     />
                     Requesting Access...
                   </>

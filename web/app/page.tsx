@@ -152,7 +152,7 @@ export default function Home() {
         {/* Hero Section */}
         <div className="text-center mb-10 md:mb-16 animate-fade-in px-4">
           <div className="inline-block mb-4 md:mb-6 transform hover:scale-105 transition-transform duration-300">
-            <img src="/favicon.png" alt="Logo" className="w-24 h-24 md:w-32 md:h-32" />
+            <img src="/favicon.png" alt="Logo" className="w-24 h-24 md:w-32 md:h-32 rounded-full" />
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 md:mb-6 tracking-tight">
             Scaneat
