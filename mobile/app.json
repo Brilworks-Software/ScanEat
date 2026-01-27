@@ -2,7 +2,7 @@
   "expo": {
     "name": "Scaneat",
     "slug": "scaneat",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Food Barcode Scanner & Health Analyzer",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.brilworks.scaneat",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.0.1",
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to scan food product barcodes or take photos of food items to provide detailed nutritional information.",
         "ITSAppUsesNonExemptEncryption": false
@@ -25,7 +25,7 @@
     },
     "android": {
       "package": "com.brilworks.scaneat",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
